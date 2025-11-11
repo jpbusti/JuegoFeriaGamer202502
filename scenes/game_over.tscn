@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3 uid="uid://g7kkncna1d0p"]
+
+[ext_resource type="Script" uid="uid://k6cm5a1wbg2h" path="res://scripts/game_over.gd" id="1_xeevv"]
+
+[node name="GameOver" type="Node2D"]
+script = ExtResource("1_xeevv")
+
+[node name="FinalScoreLabel" type="Label" parent="."]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 517.0
+offset_top = 310.0
+offset_right = 615.0
+offset_bottom = 371.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 533.0
+offset_top = 276.0
+offset_right = 620.0
+offset_bottom = 325.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Game Over
+"

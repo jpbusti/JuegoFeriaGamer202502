@@ -1,0 +1,57 @@
+[gd_scene load_steps=4 format=3 uid="uid://hy7y78fnjbm3"]
+
+[ext_resource type="Script" uid="uid://c0wbsytdtnw1r" path="res://scripts/top_scores.gd" id="1_4uxco"]
+[ext_resource type="Texture2D" uid="uid://cr7j0u5w7u15e" path="res://assets/assetsgenerales/25aa1a16b78d63f639b04b8427d4f2d6.jpg" id="2_bew30"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_6xot3"]
+texture = ExtResource("2_bew30")
+
+[node name="TopScores" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4uxco")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_6xot3")
+
+[node name="TitleLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ScoreList" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackButton" type="Button" parent="Panel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Salir"

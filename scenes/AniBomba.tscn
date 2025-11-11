@@ -1,0 +1,41 @@
+[gd_scene load_steps=8 format=3 uid="uid://cmp2cvj5x3ur8"]
+
+[ext_resource type="Texture2D" uid="uid://bt0fufnhj38pd" path="res://assets/assetsgenerales/AniBomba1.png" id="1_aijp3"]
+[ext_resource type="Texture2D" uid="uid://d00vhangs013y" path="res://assets/assetsgenerales/AniBomba2.png" id="2_86vsw"]
+[ext_resource type="Texture2D" uid="uid://dcs5mln50fdi" path="res://assets/assetsgenerales/AniBomba3.png" id="3_rrt0d"]
+[ext_resource type="Texture2D" uid="uid://030jvlh57m33" path="res://assets/assetsgenerales/AniBomba4.png" id="4_ngpym"]
+[ext_resource type="Texture2D" uid="uid://cmm6s4tkbxxq1" path="res://assets/assetsgenerales/AniBomba5.png" id="5_xc0k2"]
+[ext_resource type="Texture2D" uid="uid://8tpmfbk8jcnf" path="res://assets/assetsgenerales/AniBomba6.png" id="6_fldos"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1nobr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_aijp3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_86vsw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_rrt0d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ngpym")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_xc0k2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_fldos")
+}],
+"loop": true,
+"name": &"anibomba ",
+"speed": 1.0
+}]
+
+[node name="AniBomba" type="AnimatedSprite2D"]
+position = Vector2(578, 587)
+sprite_frames = SubResource("SpriteFrames_1nobr")
+animation = &"anibomba "
+autoplay = "anibomba "
+frame_progress = 0.7951954

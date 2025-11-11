@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://b718oacg068la"
+
+[deps]
+
+files=["res://scores.3.translation"]
+
+source_file="res://scores.csv"
+dest_files=["res://scores.3.translation"]
+
+[params]
+
+compress=true
+delimiter=0

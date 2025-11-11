@@ -1,0 +1,64 @@
+extends Node2D
+
+@export var press_goal: int = 10
+@onready var virus = $Virus
+@onready var blaster = $DynamiteBlaster
+@onready var explosion_sound = $ExplosionSound
+@onready var ani_bomba = $AniBomba
+
+var press_count: int = 0
+var exploded: bool = false
+var timer: Timer
+
+func _ready():
+	reset_game()
+	start_game()
+
+func reset_game() -> void:
+	press_count = 0
+	exploded = false
+	if virus:
+		virus.visible = true
+		virus.scale = Vector2.ONE
+
+func start_game() -> void:
+	# crear el temporizador principal (5 s)
+	timer = Timer.new()
+	timer.wait_time = 5.0
+	timer.one_shot = true
+	add_child(timer)
+	timer.timeout.connect(_on_time_out)
+	timer.start()
+
+	# reproducir animación bomba (cronómetro)
+	if ani_bomba and ani_bomba.has_method("play"):
+		ani_bomba.play("anibomba")
+
+func _input(event) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not exploded:
+		press_count += 1
+		if virus:
+			virus.scale += Vector2(0.05, 0.05)
+		if blaster:
+			blaster.play("press")
+		if press_count >= int(press_goal * Global.difficulty):
+			_on_win()
+
+func _on_win() -> void:
+	exploded = true
+	if explosion_sound:
+		explosion_sound.play()
+	if virus:
+		var tween = create_tween()
+		tween.tween_property(virus, "scale", virus.scale * 1.5, 0.3)
+		tween.tween_property(virus, "modulate", Color(1, 1, 1, 0), 0.3)
+	print("✅ Virus explotó, pero espera fin del tiempo")
+
+func _on_time_out() -> void:
+	if exploded:
+		Global.increase_score()
+		print("🏆 Score total:", Global.score)
+		get_tree().change_scene_to_file("res://scenes/score_scene.tscn")
+	else:
+		print("❌ Perdió el minijuego")
+		get_tree().change_scene_to_file("res://scenes/game_over.tscn")

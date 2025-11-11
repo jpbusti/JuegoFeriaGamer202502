@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://d05c8no73t7ny"]
+
+[ext_resource type="Script" uid="uid://jc1nc6d10cdd" path="res://scripts/score_scene.gd" id="1_jn2l2"]
+
+[node name="ScoreScreen" type="Node2D"]
+script = ExtResource("1_jn2l2")
+
+[node name="ScoreLabel" type="Label" parent="."]
+offset_left = 562.0
+offset_top = 337.0
+offset_right = 602.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.14117648, 1, 1, 1)
