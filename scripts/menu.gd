@@ -4,9 +4,13 @@ extends Control
 
 func _ready():
 	play_button.pressed.connect(_on_play_pressed)
+	print("🎮 MENU: _ready() ejecutado")
+	printerr("🔴 MENU: printerr ejecutado")
 
 func _on_play_pressed() -> void:
 	Global.reset()
+	print("🎯 BOTÓN JUGAR: Presionado")
+	printerr("🔴 BOTÓN JUGAR: Presionado")
 	
 	get_tree().change_scene_to_file("res://scenes/GameManager.tscn")
 
