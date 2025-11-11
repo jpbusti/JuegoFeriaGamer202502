@@ -7,7 +7,11 @@ func _ready():
 
 func _on_play_pressed() -> void:
 	Global.reset()
-	get_tree().change_scene_to_file("res://scenes/score_scene.tscn")
+	
+	get_tree().change_scene_to_file("res://scenes/GameManager.tscn")
 
 func _on_scores_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/top_scores.tscn")
+
+func _on_salir_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/Inicio.tscn")

@@ -11,24 +11,28 @@ var game_over := false
 var car_speed_base := 420.0
 var car_speed_actual := 420.0
 var victory := false
-
+var game_manager: Node
+var resultado_definitivo: bool = false
+var tiempo_inicio: float = 0.0
 
 func _ready():
+	# Encontrar el GameManager
+	game_manager = get_node("/root/GameManager")
 	reset_game()
 	start_game()
-
 
 func reset_game() -> void:
 	victory = false
 	game_over = false
 	microgame_active = true
+	resultado_definitivo = false
 	active_car = null
+	tiempo_inicio = Time.get_ticks_msec()
 
 	# dificultad según score global
 	var dificultad = 1.0 + (Global.score / 3.0) * 0.2
 	car_speed_actual = car_speed_base * dificultad
 	print("🚗 Dificultad:", dificultad, " | Velocidad autos:", car_speed_actual)
-
 
 func start_game() -> void:
 	# Conectar animación bomba (cronómetro visual)
@@ -46,8 +50,7 @@ func start_game() -> void:
 		car_spawn_timer.start()
 
 	microgame_active = true
-	print("🎮 Microjuego saltar iniciado.")
-
+	print("🎮 Microjuego saltar iniciado. Duración: 5 segundos")
 
 func _spawn_car():
 	if not microgame_active:
@@ -57,7 +60,7 @@ func _spawn_car():
 
 	var car_scene = preload("res://minigames/saltar/car.tscn")
 	var car = car_scene.instantiate()
-	car.speed = 420.0
+	car.speed = car_speed_actual
 
 	# posicionar el carro justo encima del ground
 	var ground_node = $Ground
@@ -68,7 +71,7 @@ func _spawn_car():
 	add_child(car)
 	active_car = car
 
-	# conectar señales (ahora sí seguro)
+	# conectar señales
 	if not car.is_connected("player_hit", Callable(self, "_on_car_player_hit")):
 		car.connect("player_hit", Callable(self, "_on_car_player_hit"))
 	if not car.is_connected("car_dodged", Callable(self, "_on_car_dodged")):
@@ -76,22 +79,29 @@ func _spawn_car():
 
 	print("Carro creado en", car.global_position)
 
-
 func _on_car_player_hit(body: Node, car_instance: Node) -> void:
-	print("Jugador golpeado -> pierde el minijuego.")
+	if resultado_definitivo:
+		return
+	
+	print("👊 Jugador golpeado - Marcando como perdido")
 	victory = false
+	resultado_definitivo = true
+	
+	# Detener el juego visualmente pero esperar los 5 segundos
 	microgame_active = false
 	if is_instance_valid(car_instance):
 		car_instance.queue_free()
-	get_tree().change_scene_to_file("res://scenes/game_over.tscn")
+	if player_node:
+		player_node.visible = false  # Ocultar personaje
 
 func _on_car_dodged() -> void:
-	print("Auto esquivado -> gana el minijuego.")
+	if resultado_definitivo:
+		return
+	
+	print("✅ Auto esquivado - Marcando como ganado")
 	victory = true
-	microgame_active = false
-	Global.increase_score()
-	get_tree().change_scene_to_file("res://scenes/score_scene.tscn")
-
+	resultado_definitivo = true
+	# El juego continúa visualmente hasta que termine el tiempo
 
 func _finish_game() -> void:
 	if not microgame_active:
@@ -104,27 +114,23 @@ func _finish_game() -> void:
 		active_car.queue_free()
 	active_car = null
 
-
 func _on_bomba_fin_anim() -> void:
-	print("Fin de animación bomba.")
-	if microgame_active:
-		_finish_game()
-
-	if victory:
-		Global.increase_score()
-		print("Ganó el minijuego. Score total:", Global.score)
-		get_tree().change_scene_to_file("res://scenes/score_scene.tscn")
-	else:
-		print("Perdió el minijuego.")
-		get_tree().change_scene_to_file("res://scenes/game_over.tscn")
-func _on_game_over():
-	var score = Global.score  
-	var player_name = "Jugador"  
-	var score_manager = get_node_or_null("/root/ScoreManager")
+	print("💥 Fin de animación bomba - Procesando resultado final")
 	
-	if score_manager:
-		score_manager.add_score(player_name, score)
-	else:
-		print("⚠️ No se encontró el nodo ScoreManager.")
+	# Asegurar que hayan pasado al menos 5 segundos
+	var tiempo_transcurrido = (Time.get_ticks_msec() - tiempo_inicio) / 1000.0
+	if tiempo_transcurrido < 5.0:
+		print("⏳ Esperando resto del tiempo: ", 5.0 - tiempo_transcurrido, " segundos")
+		await get_tree().create_timer(5.0 - tiempo_transcurrido).timeout
 	
-	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	_finish_game()
+	
+	if game_manager and game_manager.has_method("process_minigame_result"):
+		game_manager.process_minigame_result(victory)
+	else:
+		# Fallback
+		if victory:
+			Global.increase_score()
+			get_tree().change_scene_to_file("res://scenes/GameManager.tscn")
+		else:
+			get_tree().change_scene_to_file("res://scenes/game_over.tscn")

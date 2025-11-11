@@ -1,4 +1,4 @@
-extends Node2D
+"""extends Node2D
 
 @onready var label_score: Label = $ScoreLabel
 
@@ -27,4 +27,4 @@ func _load_next_minigame() -> void:
 		print(" Cambiando a minijuego:", path)
 		get_tree().change_scene_to_file(path)
 	else:
-		push_error("⚠ No se encontró ruta válida para minijuego en Global.")
+		push_error("⚠ No se encontró ruta válida para minijuego en Global.")"""

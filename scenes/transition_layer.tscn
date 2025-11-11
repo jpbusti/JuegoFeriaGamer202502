@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://4cagjgng516i"]
+
+[node name="TransitionLayer" type="CanvasLayer"]
+
+[node name="TopCurtain" type="ColorRect" parent="."]
+offset_right = 1152.0
+offset_bottom = 648.0
+scale = Vector2(1, 1e-05)
+
+[node name="BottomCurtain" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(1152, 648)
+offset_left = 1152.0
+offset_top = 648.0
+offset_right = 2304.0
+offset_bottom = 1296.0
+rotation = 3.1415927
+scale = Vector2(1, 1e-05)

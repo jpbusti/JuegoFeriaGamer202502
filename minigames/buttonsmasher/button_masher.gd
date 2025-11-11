@@ -9,14 +9,19 @@ extends Node2D
 var press_count: int = 0
 var exploded: bool = false
 var timer: Timer
+var game_manager: Node
+var resultado_definitivo: bool = false
 
 func _ready():
+	# Encontrar el GameManager
+	game_manager = get_node("/root/GameManager")
 	reset_game()
 	start_game()
 
 func reset_game() -> void:
 	press_count = 0
 	exploded = false
+	resultado_definitivo = false
 	if virus:
 		virus.visible = true
 		virus.scale = Vector2.ONE
@@ -52,13 +57,17 @@ func _on_win() -> void:
 		var tween = create_tween()
 		tween.tween_property(virus, "scale", virus.scale * 1.5, 0.3)
 		tween.tween_property(virus, "modulate", Color(1, 1, 1, 0), 0.3)
-	print("✅ Virus explotó, pero espera fin del tiempo")
+	print("✅ Virus explotado - Esperando fin del tiempo")
 
 func _on_time_out() -> void:
-	if exploded:
-		Global.increase_score()
-		print("🏆 Score total:", Global.score)
-		get_tree().change_scene_to_file("res://scenes/score_scene.tscn")
+	print("Tiempo agotado - Procesando resultado")
+	
+	if game_manager and game_manager.has_method("process_minigame_result"):
+		game_manager.process_minigame_result(exploded)
 	else:
-		print("❌ Perdió el minijuego")
-		get_tree().change_scene_to_file("res://scenes/game_over.tscn")
+		# Fallback
+		if exploded:
+			Global.increase_score()
+			get_tree().change_scene_to_file("res://scenes/GameManager.tscn")
+		else:
+			get_tree().change_scene_to_file("res://scenes/game_over.tscn")

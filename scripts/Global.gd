@@ -6,7 +6,6 @@ var microgames = [
 	"res://minigames/buttonsmasher/button_masher.tscn", 
 	"res://minigames/presionar/mini_juego_tiempo.tscn",
 	"res://minigames/saltar/saltar.tscn"
-	
 ]
 
 func reset():

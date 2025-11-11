@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="JUEGO FERIA GAMER"
-run/main_scene="uid://d4akwc0u27dn4"
+run/main_scene="uid://bnl8su1av6r63"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -19,3 +19,4 @@ config/icon="res://icon.svg"
 
 Global="*res://scripts/Global.gd"
 ScoreManager="*res://scripts/score_manager.gd"
+GameManager="*res://scripts/GameManager.gd"
