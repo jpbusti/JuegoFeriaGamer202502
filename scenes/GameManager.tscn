@@ -96,14 +96,6 @@ _data = {
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_3dus2")
 
-[node name="MinijuegoContainer" type="Node2D" parent="."]
-
-[node name="ButtonMasher" parent="MinijuegoContainer" instance=ExtResource("2_3dus2")]
-
-[node name="MiniJuegoTiempo" parent="MinijuegoContainer" instance=ExtResource("3_rtub8")]
-
-[node name="Main" parent="MinijuegoContainer" instance=ExtResource("4_jg7te")]
-
 [node name="TransitionLayer" type="CanvasLayer" parent="."]
 
 [node name="TopCurtain" type="ColorRect" parent="TransitionLayer"]
@@ -124,3 +116,11 @@ scale = Vector2(1, 1e-05)
 libraries = {
 &"": SubResource("AnimationLibrary_udu3i")
 }
+
+[node name="MinijuegoContainer" type="Node2D" parent="."]
+
+[node name="ButtonMasher" parent="MinijuegoContainer" instance=ExtResource("2_3dus2")]
+
+[node name="MiniJuegoTiempo" parent="MinijuegoContainer" instance=ExtResource("3_rtub8")]
+
+[node name="Main" parent="MinijuegoContainer" instance=ExtResource("4_jg7te")]
