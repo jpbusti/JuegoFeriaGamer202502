@@ -1,121 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://ceu77v26uq4tc"]
+[gd_scene load_steps=5 format=3 uid="uid://ceu77v26uq4tc"]
 
 [ext_resource type="Script" uid="uid://de2rmk6h30ot6" path="res://scripts/GameManager_Scene.gd" id="1_3dus2"]
 [ext_resource type="PackedScene" uid="uid://7jt1522jhnqf" path="res://minigames/buttonsmasher/button_masher.tscn" id="2_3dus2"]
 [ext_resource type="PackedScene" uid="uid://d1e5yw3llnfkb" path="res://minigames/presionar/mini_juego_tiempo.tscn" id="3_rtub8"]
 [ext_resource type="PackedScene" uid="uid://ckmk2smigdm4g" path="res://minigames/saltar/saltar.tscn" id="4_jg7te"]
 
-[sub_resource type="Animation" id="Animation_du7xs"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("TopCurtain:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1, 1e-05)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("BottomCurtain:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1, 1e-05)]
-}
-
-[sub_resource type="Animation" id="Animation_glms7"]
-resource_name = "curtains_close"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("TopCurtain:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(1, 1e-05), Vector2(1, 0.5)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("BottomCurtain:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(1, 1e-05), Vector2(1, 0.5)]
-}
-
-[sub_resource type="Animation" id="Animation_hwd4i"]
-resource_name = "curtains_open"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("TopCurtain:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(1, 0.5), Vector2(1, 1e-05)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("BottomCurtain:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(1, 0.5), Vector2(1, 1e-05)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_udu3i"]
-_data = {
-&"RESET": SubResource("Animation_du7xs"),
-&"curtains_close": SubResource("Animation_glms7"),
-&"curtains_open": SubResource("Animation_hwd4i")
-}
-
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_3dus2")
-
-[node name="TransitionLayer" type="CanvasLayer" parent="."]
-
-[node name="TopCurtain" type="ColorRect" parent="TransitionLayer"]
-offset_right = 1152.0
-offset_bottom = 648.0
-scale = Vector2(1, 1e-05)
-
-[node name="BottomCurtain" type="ColorRect" parent="TransitionLayer"]
-custom_minimum_size = Vector2(1152, 648)
-offset_left = 1152.0
-offset_top = 648.0
-offset_right = 2304.0
-offset_bottom = 1296.0
-rotation = 3.1415927
-scale = Vector2(1, 1e-05)
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="TransitionLayer"]
-libraries = {
-&"": SubResource("AnimationLibrary_udu3i")
-}
 
 [node name="MinijuegoContainer" type="Node2D" parent="."]
 

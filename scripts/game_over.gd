@@ -3,16 +3,14 @@ extends Node2D
 @onready var score_label: Label = $FinalScoreLabel
 
 func _ready():
-	score_label.text = "Tu puntuación final: " + str(Global.score)
-	print("💀 GAME OVER - Score final:", Global.score)
+	score_label.text = "Puntuación final: " + str(Global.score)
+	printerr("💀 GAME OVER - Score: " + str(Global.score))
 	
-	# Guardar automáticamente el puntaje
+	# Guardar puntaje
 	var player_name = "Jugador"
-	ScoreManager.add_score(player_name, Global.score)
-	print("💾 Score guardado en ScoreManager.")
-	
-	print("Presiona Enter para volver al menú.")
+	if Engine.has_singleton("ScoreManager"):
+		ScoreManager.add_score(player_name, Global.score)
 
-func _process(_delta):
-	if Input.is_action_just_pressed("ui_accept"):
+func _input(event):
+	if event.is_action_pressed("ui_accept"):
 		get_tree().change_scene_to_file("res://scenes/menu.tscn")
