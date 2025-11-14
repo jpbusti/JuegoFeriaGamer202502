@@ -1,0 +1,88 @@
+[gd_scene load_steps=10 format=3 uid="uid://ci4tws2vtsrby"]
+
+[ext_resource type="Script" path="res://minigames/contraseña/scripts/principal.gd" id="1_1k33c"]
+[ext_resource type="FontFile" uid="uid://pkt0aclf3ymx" path="res://assets/contraseña/fonts/BoldPixels.ttf" id="2_0pxoi"]
+[ext_resource type="AudioStream" uid="uid://bv8jhrm6hd0ee" path="res://assets/contraseña/audio/PasswordBGM.ogg" id="2_j5742"]
+[ext_resource type="AudioStream" uid="uid://c7akslcdhecih" path="res://assets/contraseña/audio/Correct.ogg" id="3_jccv5"]
+[ext_resource type="AudioStream" uid="uid://bgtttj8yadm18" path="res://assets/contraseña/audio/078.wav" id="4_j5742"]
+[ext_resource type="FontFile" uid="uid://cg7l8osul7wsi" path="res://assets/contraseña/fonts/RaccoonSerif-Bold.otf" id="6_0pxoi"]
+[ext_resource type="Shader" path="res://minigames/contraseña/scripts/crt_shader.gdshader" id="7_l2a8t"]
+[ext_resource type="Script" path="res://minigames/contraseña/scripts/mensaje.gd" id="8_0at3r"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0at3r"]
+shader = ExtResource("7_l2a8t")
+shader_parameter/screen_curvature = 0.0
+shader_parameter/scanline_brightness = 0.50000002375
+shader_parameter/scanline_density = 1.0
+shader_parameter/vignette_intensity = 0.800000038
+
+[node name="Principal" type="Node2D"]
+script = ExtResource("1_1k33c")
+
+[node name="GameTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+autostart = true
+
+[node name="RestartTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="MessageLabel" type="Label" parent="."]
+offset_left = 310.0
+offset_top = 453.0
+offset_right = 350.0
+offset_bottom = 583.0
+theme_override_fonts/font = ExtResource("2_0pxoi")
+theme_override_font_sizes/font_size = 100
+horizontal_alignment = 1
+
+[node name="FlickerTimer" type="Timer" parent="."]
+wait_time = 0.08
+
+[node name="BgmPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_j5742")
+autoplay = true
+parameters/looping = true
+
+[node name="WinSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_jccv5")
+
+[node name="LoseSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_j5742")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 64.0
+offset_top = 23.0
+offset_right = 1124.0
+offset_bottom = 106.0
+theme_override_fonts/font = ExtResource("6_0pxoi")
+theme_override_font_sizes/font_size = 65
+text = "Elija una contraseña segura "
+
+[node name="Background" type="Sprite2D" parent="."]
+z_index = -10
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 128
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_0at3r")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Mensaje" type="Label" parent="."]
+offset_left = 176.0
+offset_top = 583.0
+offset_right = 996.0
+offset_bottom = 670.0
+theme_override_fonts/font = ExtResource("2_0pxoi")
+theme_override_font_sizes/font_size = 25
+text = "LOS HACKERS ODIAN LAS CONTRASEÑAS SEGURAS. ¡HAZ QUE TE ODIEN!"
+script = ExtResource("8_0at3r")
+
+[connection signal="timeout" from="FlickerTimer" to="." method="_on_flicker_timer_timeout"]
