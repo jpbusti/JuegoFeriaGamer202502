@@ -8,6 +8,7 @@ radius = 44.04543
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_onrkg")
+jump_velocity = 200.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(189, 459)
