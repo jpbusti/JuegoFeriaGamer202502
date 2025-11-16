@@ -9,3 +9,11 @@ func _on_play_pressed():
 	printerr("🎯 Botón Jugar presionado")
 	Global.reset()
 	get_tree().change_scene_to_file("res://scenes/main_scene.tscn") 
+
+
+func _on_scores_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/top_scores.tscn") 
+
+
+func _on_salir_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/Inicio.tscn") 

@@ -1,15 +1,26 @@
 extends CharacterBody2D
 
-@export var jump_velocity: float = -700.0
-@export var gravity: float = 1150.0
+# IGNORAR valores del editor - forzar valores correctos
+var JUMP_FORCE: float = -800.0   # NEGATIVO para saltar hacia arriba
+var GRAVITY: float = 300
+
+func _ready():
+	if not is_in_group("player"):
+		add_to_group("player")
+	
+	# Forzar valores iniciales
+	JUMP_FORCE = -800.0
+	GRAVITY = 1500.0
+	
+	printerr("💥 VALORES FORZADOS - Salto: " + str(JUMP_FORCE))
 
 func _physics_process(delta: float) -> void:
-	if not is_on_floor():
-		velocity.y += gravity * delta
-	else:
-		velocity.y = 0
-
+	# Gravedad
+	velocity.y += GRAVITY * delta
+	
+	# Salto con valor garantizado
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = jump_velocity
-
+		velocity.y = JUMP_FORCE  # Esto SIEMPRE será -800
+		printerr("🚀 SALTO GARANTIZADO - VelY: " + str(velocity.y))
+	
 	move_and_slide()

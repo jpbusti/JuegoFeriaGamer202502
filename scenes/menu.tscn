@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bje1ym0oot5rw"]
+[gd_scene load_steps=4 format=3 uid="uid://bje1ym0oot5rw"]
 
 [ext_resource type="Script" uid="uid://vmgt17vfu382" path="res://scripts/menu.gd" id="1_yqeox"]
+[ext_resource type="Texture2D" uid="uid://bs4clicw48cw1" path="res://assets/assetsgenerales/menu.png" id="2_con2f"]
+[ext_resource type="FontFile" uid="uid://cohegf83vwsfe" path="res://assets/assetsgenerales/Daydream DEMO.otf" id="3_mhnvy"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -11,14 +13,9 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_yqeox")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.47124922, 0.48040062, 0.47815168, 1)
+[node name="Menu" type="Sprite2D" parent="."]
+position = Vector2(576, 324)
+texture = ExtResource("2_con2f")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -27,26 +24,29 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -119.45459
-offset_top = -66.25
-offset_right = 121.0
-offset_bottom = 154.3053
+offset_left = -131.5
+offset_top = -121.5
+offset_right = 131.5
+offset_bottom = 121.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 12
 
 [node name="Jugar" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_mhnvy")
 theme_override_font_sizes/font_size = 40
 text = "JUGAR"
 
 [node name="Scores" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_mhnvy")
 theme_override_font_sizes/font_size = 40
 text = "SCORES"
 
 [node name="Salir" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_mhnvy")
 theme_override_font_sizes/font_size = 40
 text = "SALIR"
 

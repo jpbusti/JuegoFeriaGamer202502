@@ -27,7 +27,7 @@ func load_scores():
 			var entry = scores[i]
 			var label = Label.new()
 			label.text = "%d. %s - %d pts" % [i + 1, entry["name"], entry["score"]]
-			label.add_theme_color_override("font_color", Color(1, 1, 1))
+			label.add_theme_color_override("font_color", Color(0.0, 0.0, 0.0, 1.0))
 			score_list.add_child(label)
 
 func _on_back_pressed():

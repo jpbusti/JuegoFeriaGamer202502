@@ -1,15 +1,19 @@
+# GameManager.gd - REEMPLAZA TODO EL SCRIPT
 extends Node
 
 var minigame_paths = [
 	"res://minigames/buttonsmasher/scenes/button_masher.tscn",
 	"res://minigames/presionar/scenes/mini_juego_tiempo.tscn", 
-	"res://minigames/saltar/scenes/saltar.tscn"
+	"res://minigames/saltar/scenes/saltar.tscn",
+	"res://minigames/contraseña/scenes/principal.tscn",
+	"res://minigames/popup/scenes/main.tscn"
 ]
 
 var current_minigame: Node = null
+var current_minigame_path: String = ""
 var transition_active: bool = false
 var game_active: bool = true
-var minigame_processed: bool = false  # Evitar procesamiento doble
+var minigame_processed: bool = false
 
 func _ready():
 	printerr("🚀 GameManager Autoload iniciado")
@@ -26,43 +30,80 @@ func load_and_start_minigame():
 	if not game_active: 
 		return
 	
-	# Limpiar minijuego anterior si existe
-	if current_minigame:
+	printerr("🔄 Cargando nuevo minijuego...")
+	
+	# LIMPIEZA EXTREMA - ELIMINAR TODO
+	cleanup_everything()
+	
+	# Pequeña pausa para asegurar limpieza
+	await get_tree().create_timer(0.2).timeout
+	
+	# ELEGIR MINIJUEGO ALEATORIO
+	var available_paths = minigame_paths.duplicate()
+	
+	# Evitar repetir el mismo minijuego consecutivo
+	if current_minigame_path and available_paths.size() > 1:
+		available_paths.erase(current_minigame_path)
+	
+	var random_index = randi() % available_paths.size()
+	var minigame_path = available_paths[random_index]
+	current_minigame_path = minigame_path
+	
+	printerr("🎲 Minijuego seleccionado: " + minigame_path)
+	
+	# Verificar que la ruta existe
+	if not ResourceLoader.exists(minigame_path):
+		printerr("❌ ERROR: La ruta no existe: " + minigame_path)
+		game_over()
+		return
+	
+	# CARGAR NUEVO MINIJUEGO
+	var minigame_scene = load(minigame_path)
+	if minigame_scene and minigame_scene is PackedScene:
+		current_minigame = minigame_scene.instantiate()
+		get_tree().current_scene.add_child(current_minigame)
+		printerr("✅ Minijuego añadido: " + current_minigame.name)
+	else:
+		printerr("❌ Error: No es una escena válida: " + minigame_path)
+		game_over()
+
+func cleanup_everything():
+	printerr("💥 LIMPIEZA EXTREMA - ELIMINANDO TODO...")
+	
+	var scene_root = get_tree().current_scene
+	var deleted_count = 0
+	
+	# ELIMINAR TODOS los nodos que no sean esenciales
+	for child in scene_root.get_children():
+		# Mantener solo estos nodos esenciales
+		if child.name in ["Background", "UI", "HUD", "TransitionLayer"]:
+			continue
+			
+		printerr("🗑️ ELIMINANDO: " + child.name)
+		child.queue_free()
+		deleted_count += 1
+	
+	# Asegurar que current_minigame se libera
+	if current_minigame and is_instance_valid(current_minigame):
+		printerr("🗑️ ELIMINANDO current_minigame: " + current_minigame.name)
 		current_minigame.queue_free()
 		current_minigame = null
 	
-	var random_index = randi() % minigame_paths.size()
-	var minigame_path = minigame_paths[random_index]
-	
-	printerr("📁 Cargando minijuego: " + minigame_path)
-	
-	# Cargar minijuego
-	var minigame_scene = load(minigame_path)
-	if minigame_scene:
-		current_minigame = minigame_scene.instantiate()
-		get_tree().current_scene.add_child(current_minigame)
-		
-		# Iniciar minijuego
-		if current_minigame.has_method("start_game"):
-			current_minigame.start_game()
-		elif current_minigame.has_method("reset_game"):
-			current_minigame.reset_game()
-	else:
-		printerr("❌ Error cargando minijuego")
-		game_over()
+	printerr("✅ Limpieza completada. " + str(deleted_count) + " nodos eliminados.")
 
 func process_minigame_result(won: bool):
+	printerr("🔄 GameManager procesando resultado: " + ("GANÓ" if won else "PERDIÓ"))
+	
 	# EVITAR PROCESAMIENTO DOBLE
 	if minigame_processed:
 		printerr("⚠️ Resultado ya procesado, ignorando...")
 		return
 	
 	minigame_processed = true
-	printerr("🎯 Resultado: " + ("GANÓ" if won else "PERDIÓ"))
 	
 	if won:
 		Global.score += 1
-		printerr("⭐ Score: " + str(Global.score))
+		printerr("⭐ Nuevo score: " + str(Global.score))
 		start_transition_to_next()
 	else:
 		game_over()
@@ -72,14 +113,17 @@ func start_transition_to_next():
 		return
 	transition_active = true
 	
-	printerr("🔄 Iniciando transición rápida...")
+	printerr("🎭 Iniciando transición...")
 	
-	# Crear escena de transición sobre el minijuego actual
+	# Limpiar ANTES de la transición
+	cleanup_everything()
+	
+	# Crear escena de transición
 	var transition_scene = preload("res://scenes/transition_scene.tscn").instantiate()
 	get_tree().current_scene.add_child(transition_scene)
 
 func complete_transition():
-	printerr("✅ Transición completada - Cargando siguiente minijuego")
+	printerr("✅ Transición completada")
 	transition_active = false
 	minigame_processed = false
 	load_and_start_minigame()
@@ -89,6 +133,9 @@ func game_over():
 	game_active = false
 	transition_active = false
 	minigame_processed = false
+	
+	# Limpiar antes del game over
+	cleanup_everything()
 	
 	# Guardar puntaje
 	var player_name = "Jugador"

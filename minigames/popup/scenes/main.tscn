@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://d2iunvqycthx2"]
+[gd_scene load_steps=11 format=3 uid="uid://d2iunvqycthx2"]
 
 [ext_resource type="Script" uid="uid://doubcq8cocwl4" path="res://minigames/popup/scripts/main.gd" id="1_2ubv5"]
 [ext_resource type="FontFile" uid="uid://pd6lbo5aradf" path="res://assets/popup/fonts/Funky Catch.otf" id="2_wkhj4"]
@@ -8,6 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://dljgwa738mb7u" path="res://assets/popup/audio/fail.ogg" id="6_2kchp"]
 [ext_resource type="AudioStream" uid="uid://x15cklbitj56" path="res://assets/popup/audio/laugh.ogg" id="7_tbxah"]
 [ext_resource type="AudioStream" uid="uid://c2pi6tnlkppoc" path="res://assets/popup/audio/BGM.ogg" id="8_a5x14"]
+[ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="9_wkhj4"]
 
 [sub_resource type="FontVariation" id="FontVariation_jyhfs"]
 base_font = ExtResource("2_wkhj4")
@@ -57,6 +58,8 @@ stream = ExtResource("7_tbxah")
 stream = ExtResource("8_a5x14")
 autoplay = true
 parameters/looping = true
+
+[node name="AniBomba" parent="." instance=ExtResource("9_wkhj4")]
 
 [connection signal="timeout" from="GameTimer" to="." method="_on_game_timer_timeout"]
 [connection signal="timeout" from="RestartTimer" to="." method="_on_restart_timer_timeout"]

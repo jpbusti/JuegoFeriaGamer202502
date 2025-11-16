@@ -1,0 +1,1241 @@
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\buttonsmasher\scripts\button_masher.gd ---
+extends Node2D
+
+# CONFIGURACIÓN DE DIFICULTAD
+@export var META_BASE: int = 10
+@export var INCREMENTO_META: int = 2  # Clicks extra por nivel  <-- AQUÍ FALTABA EL #
+
+@onready var virus = $Virus
+@onready var blaster = $DynamiteBlaster
+@onready var explosion_sound = $ExplosionSound
+@onready var ani_bomba = $AniBomba
+
+var press_count: int = 0
+var exploded: bool = false
+var timer: Timer
+var meta_actual: int
+
+func _ready():
+	printerr("🎮 ButtonMasher iniciado")
+	apply_difficulty_settings()
+	reset_game()
+	start_game()
+
+func apply_difficulty_settings():
+	# Configurar meta según dificultad
+	meta_actual = META_BASE + (Global.score * INCREMENTO_META)
+	printerr("🎯 Meta: " + str(meta_actual) + " clicks")
+
+func reset_game():
+	press_count = 0
+	exploded = false
+	if virus:
+		virus.visible = true
+		virus.scale = Vector2.ONE
+
+func start_game():
+	# Temporizador de 5 segundos
+	timer = Timer.new()
+	timer.wait_time = 5.0
+	timer.one_shot = true
+	add_child(timer)
+	timer.timeout.connect(_on_time_out)
+	timer.start()
+
+	# Animación bomba
+	if ani_bomba and ani_bomba.has_method("play"):
+		ani_bomba.play("anibomba")
+
+func _input(event):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not exploded:
+		press_count += 1
+		if virus:
+			virus.scale += Vector2(0.05, 0.05)
+		if blaster:
+			blaster.play("press")
+		if press_count >= meta_actual:
+			_on_win()
+
+func _on_win():
+	exploded = true
+	if explosion_sound:
+		explosion_sound.play()
+	if virus:
+		var tween = create_tween()
+		tween.tween_property(virus, "scale", virus.scale * 1.5, 0.3)
+		tween.tween_property(virus, "modulate", Color(1, 1, 1, 0), 0.3)
+	printerr("✅ Virus explotado - Clicks: " + str(press_count))
+
+func _on_time_out():
+	printerr("⏰ ButtonMasher terminado - Ganó: " + str(exploded) + ", Clicks: " + str(press_count) + "/" + str(meta_actual))
+	
+	var game_manager = get_node("/root/GameManager")
+	if game_manager and game_manager.has_method("process_minigame_result"):
+		game_manager.process_minigame_result(exploded)
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\mensaje.gd ---
+extends Label
+
+# Parámetros ajustables desde el Inspector
+@export var bob_amplitude: float = 3.0        # píxeles verticales máximos
+@export var bob_frequency: float = 1.8        # ciclos por segundo (más -> más rápido)
+@export var rotate_amplitude_deg: float = 2.5 # grados máximos de rotación
+@export var rotate_speed: float = 0.7         # velocidad de oscilación de rotación
+@export var scale_amplitude: float = 0.04     # variación relativa de escala (0.04 = ±4%)
+@export var color_pulse_intensity: float = 0.10 # cuánto cambia el color (0..1)
+@export var random_phase: bool = true         # fase aleatoria para no repetir siempre igual
+
+# Internals
+var _t: float = 0.0
+var _base_pos: Vector2 = Vector2.ZERO
+var _base_rotation: float = 0.0
+var _base_scale: Vector2 = Vector2.ONE
+var _phase_offset: float = 0.0
+var _base_modulate: Color = Color(1,1,1,1)
+
+func _ready() -> void:
+	# Guardamos estado inicial
+	_base_pos = position
+	_base_rotation = rotation_degrees
+	_base_scale = scale
+	_base_modulate = modulate
+
+	if random_phase:
+		var rg: RandomNumberGenerator = RandomNumberGenerator.new()
+		rg.randomize()
+		_phase_offset = rg.randf_range(0.0, TAU)
+
+	set_process(true)
+
+func _process(delta: float) -> void:
+	_t += delta
+
+	# --- Bobbing (sube/baja) ---
+	var bob: float = sin((_t * bob_frequency * TAU) + _phase_offset) * bob_amplitude
+	position = _base_pos + Vector2(0.0, bob)
+
+	# --- Rotación sutil ---
+	var rot: float = sin((_t * rotate_speed * TAU) + _phase_offset * 0.7) * rotate_amplitude_deg
+	rotation_degrees = _base_rotation + rot
+
+	# --- Pulso de escala (ligero) ---
+	var s: float = 1.0 + sin(_t * bob_frequency * TAU + _phase_offset * 0.5) * scale_amplitude
+	scale = _base_scale * s
+
+	# --- Pulso de color (opcional, muy sutil) ---
+	var pulse: float = (sin((_t * 1.5) + _phase_offset) * 0.5 + 0.5) * color_pulse_intensity
+	modulate = Color(
+		clamp(_base_modulate.r + pulse, 0.0, 1.0),
+		clamp(_base_modulate.g + pulse, 0.0, 1.0),
+		clamp(_base_modulate.b + pulse, 0.0, 1.0),
+		_base_modulate.a
+	)
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\password_game.gd ---
+extends Control
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\password_option.gd ---
+# password_option.gd - MANTENER EL ORIGINAL QUE FUNCIONABA
+extends Area2D
+
+signal chose_correct
+signal chose_wrong
+
+var is_secure: bool = false
+var password_text: String = ""
+
+@onready var password_text_label: Label = $PasswordText
+
+func _ready():
+	password_text_label.text = password_text
+
+func set_password_text(text: String):
+	password_text = text
+	if password_text_label:
+		password_text_label.text = password_text
+
+func _on_input_event(viewport, event, shape_idx):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if is_secure:
+			chose_correct.emit()
+		else:
+			chose_wrong.emit()
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\principal.gd ---
+# principal.gd - VERSIÓN SUPER SIMPLE
+extends Node2D
+
+@onready var game_timer: Timer = $GameTimer
+@onready var message_label: Label = $MessageLabel
+@onready var win_sound: AudioStreamPlayer2D = $WinSound
+@onready var lose_sound: AudioStreamPlayer2D = $LoseSound
+@onready var ani_bomba: AnimatedSprite2D = $AniBomba
+
+var game_over = false
+var victory = false
+
+func _ready():
+	printerr("🎮 CONTRASEÑA - Iniciado")
+	start_game()
+
+func start_game():
+	# Timer de 5 segundos
+	game_timer.wait_time = 5.0
+	game_timer.start()
+	
+	# Animación bomba
+	if ani_bomba:
+		ani_bomba.play("anibomba")
+	
+	# Generar opciones
+	spawn_options()
+	
+	printerr("⏰ CONTRASEÑA - 5 segundos iniciados")
+
+func spawn_options():
+	var passwords = ["123456", "contraseÃąa", ")T5oh27X2S\\Q"]
+	passwords.shuffle()
+	
+	var positions = [Vector2(350, 150), Vector2(350, 250), Vector2(350, 350)]
+	
+	for i in 3:
+		var option_scene = preload("res://minigames/contraseña/scenes/password_option.tscn")
+		var option = option_scene.instantiate()
+		option.position = positions[i]
+		option.set_password_text(passwords[i])
+		option.is_secure = (passwords[i] == ")T5oh27X2S\\Q")
+		option.chose_correct.connect(win_game)
+		option.chose_wrong.connect(lose_game)
+		add_child(option)
+		
+		printerr("🔑 Opción " + str(i) + ": " + passwords[i] + " - Segura: " + str(option.is_secure))
+
+func win_game():
+	if game_over: return
+	game_over = true
+	victory = true
+	game_timer.stop()
+	
+	printerr("✅ CONTRASEÑA - GANÓ")
+	
+	if win_sound:
+		win_sound.play()
+	
+	message_label.text = "¡GANASTE!"
+	message_label.visible = true
+	
+	# Esperar y notificar
+	await get_tree().create_timer(1.5).timeout
+	notify_game_manager()
+
+func lose_game():
+	if game_over: return
+	game_over = true
+	victory = false
+	game_timer.stop()
+	
+	printerr("❌ CONTRASEÑA - PERDIÓ")
+	
+	if lose_sound:
+		lose_sound.play()
+	
+	message_label.text = "¡PERDISTE!"
+	message_label.visible = true
+	
+	# Esperar y notificar
+	await get_tree().create_timer(1.5).timeout
+	notify_game_manager()
+
+func _on_game_timer_timeout():
+	if not game_over:
+		printerr("⏰ CONTRASEÑA - TIEMPO AGOTADO")
+		lose_game()
+
+func notify_game_manager():
+	printerr("📢 CONTRASEÑA - Notificando al GameManager")
+	var game_manager = get_node("/root/GameManager")
+	if game_manager and game_manager.has_method("process_minigame_result"):
+		game_manager.process_minigame_result(victory)
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\popup\scripts\main.gd ---
+extends Node2D
+
+# CONFIGURACIÓN DE DIFICULTAD
+@export var TIEMPO_BASE: float = 5.0
+@export var REDUCCION_TIEMPO: float = 0.5  # Reducción de segundos por nivel
+
+# Escenas de popups
+const POPUP_FELICIDADES_SCENE = preload("res://minigames/popup/scenes/popup_felicidades.tscn")
+const POPUP_DESCARGA_SCENE = preload("res://minigames/popup/scenes/popup_descarga.tscn")
+const POPUP_VIDEO_SCENE = preload("res://minigames/popup/scenes/popup_video.tscn")
+
+const POPUP_SCENES = [
+	POPUP_FELICIDADES_SCENE,
+	POPUP_DESCARGA_SCENE,
+	POPUP_VIDEO_SCENE
+]
+
+# Posiciones
+const POSICIONES = [
+	Vector2(550, 300),
+	Vector2(860, 400),
+	Vector2(250, 510)
+]
+
+# Referencias a nodos
+@onready var game_timer: Timer = $GameTimer
+@onready var message_label: Label = $MessageLabel
+@onready var win_sound: AudioStreamPlayer2D = $WinSound
+@onready var fail_sound: AudioStreamPlayer2D = $FailSound
+@onready var virus_sprite: Sprite2D = $VirusSprite
+@onready var laugh_sound: AudioStreamPlayer2D = $LaughSound
+@onready var bgm_player: AudioStreamPlayer2D = $BgmPlayer
+@onready var ani_bomba: AnimatedSprite2D = $AniBomba
+
+# Variables del juego
+var popups_restantes: int = 3
+var game_over: bool = false
+var victory: bool = false
+var timer: Timer
+
+func _ready():
+	printerr("🎮 Minijuego Popup iniciado")
+	apply_difficulty_settings()
+	reset_game()
+	start_game()
+
+func apply_difficulty_settings():
+	# Configurar tiempo según dificultad (menos tiempo en niveles más altos)
+	var tiempo_actual = TIEMPO_BASE - (Global.score * REDUCCION_TIEMPO)
+	tiempo_actual = max(tiempo_actual, 2.0)
+	printerr("🎯 Dificultad: " + str(Global.score) + ", Tiempo: " + str(tiempo_actual))
+
+func reset_game():
+	game_over = false
+	victory = false
+	popups_restantes = 3
+	
+	# Limpiar popups anteriores
+	for child in get_children():
+		if child is Area2D:  # Asumiendo que los popups son Area2D
+			child.queue_free()
+
+func start_game():
+	# Temporizador principal de 5 segundos
+	timer = Timer.new()
+	timer.wait_time = 5.0  # 5 segundos fijos
+	timer.one_shot = true
+	add_child(timer)
+	timer.timeout.connect(_on_time_out)
+	timer.start()
+
+	# Configurar timer de UI
+	game_timer.wait_time = 5.0
+	game_timer.start()
+
+	# Animación bomba
+	if ani_bomba and ani_bomba.has_method("play"):
+		ani_bomba.play("anibomba")
+		printerr("💣 Animación de bomba iniciada")
+
+	# Generar popups
+	spawn_popups()
+	
+	printerr("⏰ Popup - Juego configurado para 5.0 segundos")
+
+func spawn_popups() -> void:
+	for i in 3:
+		var new_popup = POPUP_SCENES[i].instantiate()
+		new_popup.position = POSICIONES[i]
+		new_popup.close_success.connect(_on_Popup_close_success)
+		new_popup.close_fail.connect(_on_Popup_close_fail)
+		add_child(new_popup)
+	
+	printerr("📧 3 popups generados")
+
+# --- Lógica de Ganar/Perder ---
+
+func _on_Popup_close_success() -> void:
+	if game_over: return
+
+	popups_restantes -= 1
+	printerr("✅ Popup cerrado - Faltan: " + str(popups_restantes))
+	
+	if popups_restantes == 0:
+		win_game()
+
+func _on_Popup_close_fail() -> void:
+	if game_over: return
+	printerr("❌ Clic en lugar equivocado")
+	lose_game()
+
+func win_game():
+	if game_over: return
+	game_over = true
+	victory = true
+	
+	# Detener timers
+	if timer:
+		timer.stop()
+	game_timer.stop()
+	
+	# Efectos de victoria
+	if win_sound:
+		win_sound.play()
+	
+	virus_sprite.visible = false
+	message_label.text = "GANASTE"
+	message_label.visible = true
+	
+	# Esperar y notificar
+	await get_tree().create_timer(1.5).timeout
+	notify_game_manager()
+
+func lose_game():
+	if game_over: return
+	game_over = true
+	victory = false
+	
+	# Detener timers
+	if timer:
+		timer.stop()
+	game_timer.stop()
+	
+	# Efectos de derrota
+	bgm_player.stop()
+	if fail_sound:
+		fail_sound.play()
+	if laugh_sound:
+		laugh_sound.play()
+	
+	virus_sprite.visible = true
+	message_label.visible = false
+	
+	# Esperar y notificar
+	await get_tree().create_timer(1.5).timeout
+	notify_game_manager()
+
+func notify_game_manager():
+	printerr("🎊 Popup - Resultado: " + ("GANÓ" if victory else "PERDIÓ"))
+	
+	var game_manager = get_node("/root/GameManager")
+	if game_manager and game_manager.has_method("process_minigame_result"):
+		game_manager.process_minigame_result(victory)
+	else:
+		printerr("❌ GameManager no encontrado")
+
+# --- Temporizadores ---
+
+func _on_time_out():
+	if not game_over:
+		printerr("⏰ Tiempo agotado - Popup")
+		lose_game()
+
+func _on_GameTimer_timeout():
+	# Este timer puede usarse para actualizar una barra de tiempo visual
+	pass
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\popup\scripts\popup.gd ---
+extends Area2D
+
+signal close_success
+signal close_fail
+
+# ¡Ya no necesitamos la función set_texture!
+# La textura se asigna directamente en el editor de cada escena.
+
+# Esta función se llama cuando se hace clic en el CUERPO del pop-up
+func _on_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		emit_signal("close_fail")
+
+# Esta función se llama cuando se hace clic en la "X"
+func _on_close_button_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		emit_signal("close_success")
+		queue_free()
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\presionar\scripts\mini_juego_tiempo.gd ---
+extends Node2D
+
+# CONFIGURACIÓN DE DIFICULTAD
+@export var VELOCIDAD_BASE: float = 1000
+@export var RANGO_ZONA: float = 100.0  # Tamaño de la zona objetivo
+@export var INCREMENTO_DIFICULTAD: float = 0.1  # Incremento por nivel
+
+@onready var zona = $ZonaObjetivo
+@onready var indicador = $Indicador
+@onready var ani_bomba = $AniBomba
+
+var direccion: int = 1
+var velocidad_actual: float
+var limite_izquierdo: float = 100
+var limite_derecho: float = 1000
+var acierto: bool = false
+var juego_activo: bool = false
+var timer: Timer
+
+func _ready():
+	printerr("🎮 Minijuego Tiempo iniciado")
+	apply_difficulty_settings()
+	reset_game()
+	start_game()
+
+func apply_difficulty_settings():
+	# Configurar dificultad según score
+	var nivel_dificultad = 1 + (Global.score * INCREMENTO_DIFICULTAD)
+	velocidad_actual = VELOCIDAD_BASE * nivel_dificultad
+	
+	# Ajustar tamaño de la zona (más pequeña en niveles altos)
+	if zona:
+		zona.scale = Vector2(1.0 / nivel_dificultad, 1.0)
+	
+	printerr("🎯 Dificultad: " + str(nivel_dificultad) + ", Velocidad: " + str(velocidad_actual))
+
+func reset_game():
+	acierto = false
+	juego_activo = true
+	direccion = 1
+	
+	if indicador:
+		indicador.position.x = 200
+
+func start_game():
+	# Temporizador de 5 segundos
+	timer = Timer.new()
+	timer.wait_time = 5.0
+	timer.one_shot = true
+	add_child(timer)
+	timer.timeout.connect(_on_time_out)
+	timer.start()
+
+	# Animación bomba
+	if ani_bomba and ani_bomba.has_method("play"):
+		ani_bomba.play("anibomba")
+
+	juego_activo = true
+
+func _process(delta):
+	if not juego_activo:
+		return
+
+	indicador.position.x += direccion * velocidad_actual * delta
+	if indicador.position.x > limite_derecho:
+		indicador.position.x = limite_derecho
+		direccion = -1
+	elif indicador.position.x < limite_izquierdo:
+		indicador.position.x = limite_izquierdo
+		direccion = 1
+
+func _input(event):
+	if not juego_activo:
+		return
+		
+	if event.is_action_pressed("ui_accept"):
+		comprobar_acierto()
+
+func comprobar_acierto():
+	if not zona or not indicador:
+		return
+
+	var zona_rect = zona.get_global_rect()
+	var indicador_pos = indicador.global_position
+	var indicador_size = Vector2(50, 50)
+	
+	var indicador_rect = Rect2(indicador_pos - indicador_size/2, indicador_size)
+
+	if zona_rect.intersects(indicador_rect):
+		acierto = true
+		printerr("✅ ACIERTO!")
+	else:
+		acierto = false
+		printerr("❌ FALLO")
+	
+	juego_activo = false
+
+func _on_time_out():
+	printerr("⏰ Minijuego Tiempo terminado - Ganó: " + str(acierto))
+	juego_activo = false
+	
+	var game_manager = get_node("/root/GameManager")
+	if game_manager and game_manager.has_method("process_minigame_result"):
+		game_manager.process_minigame_result(acierto)
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\saltar\scripts\car.gd ---
+extends Area2D
+
+signal car_dodged
+signal player_hit(body, car_instance)
+
+@export var speed: float = 400.0
+var _hit_processed: bool = false
+
+func _ready() -> void:
+	monitoring = true
+	monitorable = true
+	if not body_entered.is_connected(_on_body_entered):
+		body_entered.connect(_on_body_entered)
+
+func _physics_process(delta: float) -> void:
+	if _hit_processed:
+		return
+	position.x -= speed * delta
+	if position.x < -100:
+		_hit_processed = true
+		car_dodged.emit()
+		queue_free()
+
+func _on_body_entered(body: Node) -> void:
+	if _hit_processed:
+		return
+	if body and body.is_in_group("player"):
+		print("🚗 Carro tocó al jugador:", body.name)
+		_hit_processed = true
+		player_hit.emit(body, self)
+		queue_free()
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\saltar\scripts\jugador.gd ---
+extends CharacterBody2D
+
+# IGNORAR valores del editor - forzar valores correctos
+var JUMP_FORCE: float = -800.0   # NEGATIVO para saltar hacia arriba
+var GRAVITY: float = 300
+
+func _ready():
+	if not is_in_group("player"):
+		add_to_group("player")
+	
+	# Forzar valores iniciales
+	JUMP_FORCE = -800.0
+	GRAVITY = 1500.0
+	
+	printerr("💥 VALORES FORZADOS - Salto: " + str(JUMP_FORCE))
+
+func _physics_process(delta: float) -> void:
+	# Gravedad
+	velocity.y += GRAVITY * delta
+	
+	# Salto con valor garantizado
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+		velocity.y = JUMP_FORCE  # Esto SIEMPRE será -800
+		printerr("🚀 SALTO GARANTIZADO - VelY: " + str(velocity.y))
+	
+	move_and_slide()
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\saltar\scripts\player.gd ---
+extends Node2D
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\saltar\scripts\saltar.gd ---
+extends Node2D
+
+# CONFIGURACIÓN DE DIFICULTAD - FÁCIL DE MODIFICAR
+@export var VELOCIDAD_BASE: float = 600.0  # Más rápido por defecto
+@export var ESCALA_CARRO: float = 0.6      # Carro más pequeño
+@export var FUERZA_SALTO: float = 800.0    # Salto más rápido
+@export var INTERVALO_CARROS: float = 1.0  # Tiempo entre carros
+@export var CARROS_POR_NIVEL: int = 1      # Carros extra por nivel de dificultad
+
+@onready var player_node = $Player
+@onready var ani_bomba = $AniBomba
+@onready var car_spawn_timer = $CarSpawnTimer
+
+var active_cars = []  # Array para múltiples carros
+var microgame_active := false
+var victory := false
+var timer: Timer
+var cars_spawned: int = 0
+var max_cars: int = 1
+
+func _ready():
+	printerr("🎮 Saltar iniciado - Configuración: " + str(VELOCIDAD_BASE) + " velocidad, " + str(ESCALA_CARRO) + " escala")
+	apply_difficulty_settings()
+	reset_game()
+	start_game()
+
+func apply_difficulty_settings():
+	# Aplicar configuración de dificultad según el score
+	var nivel_dificultad = 1 + (Global.score / 2)  # Cada 2 puntos aumenta la dificultad
+	max_cars = CARROS_POR_NIVEL * nivel_dificultad
+	
+	printerr("🎯 Dificultad nivel: " + str(nivel_dificultad) + ", Carros máx: " + str(max_cars))
+
+func reset_game():
+	victory = false
+	microgame_active = true
+	active_cars = []
+	cars_spawned = 0
+
+func start_game():
+	# Temporizador principal de 5 segundos
+	timer = Timer.new()
+	timer.wait_time = 5.0
+	timer.one_shot = true
+	add_child(timer)
+	timer.timeout.connect(_on_time_out)
+	timer.start()
+
+	# Animación bomba
+	if ani_bomba and ani_bomba.has_method("play"):
+		ani_bomba.play("anibomba")
+
+	# Configurar spawn de múltiples carros
+	car_spawn_timer.wait_time = INTERVALO_CARROS
+	car_spawn_timer.timeout.connect(_spawn_car)
+	car_spawn_timer.start()
+
+	microgame_active = true
+
+func _spawn_car():
+	if not microgame_active or cars_spawned >= max_cars:
+		car_spawn_timer.stop()
+		return
+
+	var car_scene = preload("res://minigames/saltar/scenes/car.tscn")
+	var car = car_scene.instantiate()
+	
+	# Aplicar configuración de dificultad al carro
+	car.speed = VELOCIDAD_BASE * (1.0 + Global.score * 0.15)  # 15% más rápido por nivel
+	car.scale = Vector2(ESCALA_CARRO, ESCALA_CARRO)
+	
+	# Posicionar carro
+	var ground = $Ground
+	var ground_y = ground.global_position.y - 50
+	car.global_position = Vector2(1200, ground_y)
+
+	add_child(car)
+	active_cars.append(car)
+	cars_spawned += 1
+
+	# Conectar señales
+	if not car.is_connected("player_hit", Callable(self, "_on_car_player_hit")):
+		car.connect("player_hit", Callable(self, "_on_car_player_hit"))
+	if not car.is_connected("car_dodged", Callable(self, "_on_car_dodged")):
+		car.connect("car_dodged", Callable(self, "_on_car_dodged"))
+	
+	printerr("🚗 Carro " + str(cars_spawned) + "/" + str(max_cars) + " generado")
+
+func _on_car_player_hit(_body: Node, car_instance: Node):
+	if not microgame_active:
+		return
+	
+	printerr("💥 Jugador golpeado")
+	victory = false
+	microgame_active = false
+	car_spawn_timer.stop()
+	
+	if is_instance_valid(car_instance):
+		car_instance.queue_free()
+
+func _on_car_dodged():
+	if not microgame_active:
+		return
+	
+	printerr("✅ Auto esquivado")
+	victory = true
+	# No detenemos el juego aquí para permitir múltiples carros
+
+func _on_time_out():
+	printerr("⏰ Saltar terminado - Ganó: " + str(victory) + ", Carros: " + str(cars_spawned))
+	microgame_active = false
+	car_spawn_timer.stop()
+	
+	# Limpiar carros
+	for car in active_cars:
+		if is_instance_valid(car):
+			car.queue_free()
+	active_cars.clear()
+	
+	var game_manager = get_node("/root/GameManager")
+	if game_manager and game_manager.has_method("process_minigame_result"):
+		game_manager.process_minigame_result(victory)
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\AniDynamite.gd ---
+extends AnimatedSprite2D
+
+func _ready():
+	connect("animation_finished", Callable(self, "_on_animation_finished"))
+	set_process_input(true)
+
+func _input(event):
+	# Detecta clic izquierdo sobre el sprite (si tiene CollisionShape2D y Pickable activo)
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if not is_playing():
+			play("press")
+
+func _on_animation_finished():
+	frame = 0
+	stop()
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\GameManager.gd ---
+# GameManager.gd - REEMPLAZA TODO EL SCRIPT
+extends Node
+
+var minigame_paths = [
+	"res://minigames/buttonsmasher/scenes/button_masher.tscn",
+	"res://minigames/presionar/scenes/mini_juego_tiempo.tscn", 
+	"res://minigames/saltar/scenes/saltar.tscn",
+	"res://minigames/contraseña/scenes/principal.tscn",
+	"res://minigames/popup/scenes/main.tscn"
+]
+
+var current_minigame: Node = null
+var current_minigame_path: String = ""
+var transition_active: bool = false
+var game_active: bool = true
+var minigame_processed: bool = false
+
+func _ready():
+	printerr("🚀 GameManager Autoload iniciado")
+	randomize()
+
+func start_first_minigame():
+	printerr("🎮 Iniciando primer minijuego")
+	game_active = true
+	transition_active = false
+	minigame_processed = false
+	load_and_start_minigame()
+
+func load_and_start_minigame():
+	if not game_active: 
+		return
+	
+	printerr("🔄 Cargando nuevo minijuego...")
+	
+	# LIMPIEZA EXTREMA - ELIMINAR TODO
+	cleanup_everything()
+	
+	# Pequeña pausa para asegurar limpieza
+	await get_tree().create_timer(0.2).timeout
+	
+	# ELEGIR MINIJUEGO ALEATORIO
+	var available_paths = minigame_paths.duplicate()
+	
+	# Evitar repetir el mismo minijuego consecutivo
+	if current_minigame_path and available_paths.size() > 1:
+		available_paths.erase(current_minigame_path)
+	
+	var random_index = randi() % available_paths.size()
+	var minigame_path = available_paths[random_index]
+	current_minigame_path = minigame_path
+	
+	printerr("🎲 Minijuego seleccionado: " + minigame_path)
+	
+	# Verificar que la ruta existe
+	if not ResourceLoader.exists(minigame_path):
+		printerr("❌ ERROR: La ruta no existe: " + minigame_path)
+		game_over()
+		return
+	
+	# CARGAR NUEVO MINIJUEGO
+	var minigame_scene = load(minigame_path)
+	if minigame_scene and minigame_scene is PackedScene:
+		current_minigame = minigame_scene.instantiate()
+		get_tree().current_scene.add_child(current_minigame)
+		printerr("✅ Minijuego añadido: " + current_minigame.name)
+	else:
+		printerr("❌ Error: No es una escena válida: " + minigame_path)
+		game_over()
+
+func cleanup_everything():
+	printerr("💥 LIMPIEZA EXTREMA - ELIMINANDO TODO...")
+	
+	var scene_root = get_tree().current_scene
+	var deleted_count = 0
+	
+	# ELIMINAR TODOS los nodos que no sean esenciales
+	for child in scene_root.get_children():
+		# Mantener solo estos nodos esenciales
+		if child.name in ["Background", "UI", "HUD", "TransitionLayer"]:
+			continue
+			
+		printerr("🗑️ ELIMINANDO: " + child.name)
+		child.queue_free()
+		deleted_count += 1
+	
+	# Asegurar que current_minigame se libera
+	if current_minigame and is_instance_valid(current_minigame):
+		printerr("🗑️ ELIMINANDO current_minigame: " + current_minigame.name)
+		current_minigame.queue_free()
+		current_minigame = null
+	
+	printerr("✅ Limpieza completada. " + str(deleted_count) + " nodos eliminados.")
+
+func process_minigame_result(won: bool):
+	printerr("🔄 GameManager procesando resultado: " + ("GANÓ" if won else "PERDIÓ"))
+	
+	# EVITAR PROCESAMIENTO DOBLE
+	if minigame_processed:
+		printerr("⚠️ Resultado ya procesado, ignorando...")
+		return
+	
+	minigame_processed = true
+	
+	if won:
+		Global.score += 1
+		printerr("⭐ Nuevo score: " + str(Global.score))
+		start_transition_to_next()
+	else:
+		game_over()
+
+func start_transition_to_next():
+	if transition_active: 
+		return
+	transition_active = true
+	
+	printerr("🎭 Iniciando transición...")
+	
+	# Limpiar ANTES de la transición
+	cleanup_everything()
+	
+	# Crear escena de transición
+	var transition_scene = preload("res://scenes/transition_scene.tscn").instantiate()
+	get_tree().current_scene.add_child(transition_scene)
+
+func complete_transition():
+	printerr("✅ Transición completada")
+	transition_active = false
+	minigame_processed = false
+	load_and_start_minigame()
+
+func game_over():
+	printerr("💀 Game Over - Score: " + str(Global.score))
+	game_active = false
+	transition_active = false
+	minigame_processed = false
+	
+	# Limpiar antes del game over
+	cleanup_everything()
+	
+	# Guardar puntaje
+	var player_name = "Jugador"
+	if Engine.has_singleton("ScoreManager"):
+		ScoreManager.add_score(player_name, Global.score)
+	
+	get_tree().change_scene_to_file("res://scenes/game_over.tscn")
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\GameManager_Scene.gd ---
+extends Node2D
+
+@onready var transition_layer: CanvasLayer = $TransitionLayer
+@onready var anim: AnimationPlayer = $TransitionLayer/AnimationPlayer
+@onready var top_curtain: ColorRect = $TransitionLayer/TopCurtain
+@onready var bottom_curtain: ColorRect = $TransitionLayer/BottomCurtain
+
+func _ready():
+	print("🎮 GameManager Escena iniciado")
+	
+	# Configurar cortinas inicialmente ABIERTAS
+	setup_curtains()
+	
+	# Configurar el TransitionLayer en el GameManager Autoload
+	var game_manager_autoload = get_node("/root/GameManager")
+	if game_manager_autoload and game_manager_autoload.has_method("setup_transition_layer"):
+		game_manager_autoload.setup_transition_layer(transition_layer, anim)
+		print("✅ TransitionLayer configurado en Autoload")
+	else:
+		print("❌ GameManager Autoload no encontrado")
+	
+	# Iniciar primer minijuego
+	if game_manager_autoload and game_manager_autoload.has_method("start_first_minigame"):
+		game_manager_autoload.start_first_minigame()
+
+func setup_curtains():
+	# Configurar cortinas inicialmente ABIERTAS (fuera de pantalla)
+	var screen_size = get_viewport().get_visible_rect().size
+	
+	top_curtain.size = Vector2(screen_size.x * 1.1, screen_size.y / 2)
+	top_curtain.position = Vector2(-screen_size.x * 0.05, -screen_size.y / 2)
+	
+	bottom_curtain.size = Vector2(screen_size.x * 1.1, screen_size.y / 2)
+	bottom_curtain.position = Vector2(-screen_size.x * 0.05, screen_size.y)
+	
+	print("🎬 Cortinas configuradas en posición abierta")
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\game_over.gd ---
+extends Node2D
+
+@onready var score_label: Label = $FinalScoreLabel
+
+func _ready():
+	score_label.text = "Puntuación final: " + str(Global.score)
+	printerr("💀 GAME OVER - Score: " + str(Global.score))
+	
+	# Guardar puntaje
+	var player_name = "Jugador"
+	if Engine.has_singleton("ScoreManager"):
+		ScoreManager.add_score(player_name, Global.score)
+
+func _input(event):
+	if event.is_action_pressed("ui_accept"):
+		get_tree().change_scene_to_file("res://scenes/menu.tscn")
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\Global.gd ---
+extends Node
+
+var score: int = 0
+var difficulty: float = 1.0
+
+func reset():
+	score = 0
+	difficulty = 1
+
+func increase_score():
+	score += 1
+	if score % 3 == 0:
+		difficulty += 0.5
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\inicio.gd ---
+extends Node2D
+
+@onready var anim = $AnimatedSprite2D
+
+func _ready():
+	if anim:
+		anim.play("press_start")
+
+func _input(event):
+	if event.is_action_pressed("ui_accept"):
+		get_tree().change_scene_to_file("res://scenes/menu.tscn")
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\main_scene.gd ---
+# main_scene.gd
+extends Node2D
+
+@onready var minigame_container = $MinijuegoContainer
+
+func _ready():
+	printerr("🏠 MainScene iniciada")
+	
+	# Configurar el contenedor en el GameManager
+	var game_manager = get_node("/root/GameManager")
+	if game_manager and game_manager.has_method("setup_minigame_container"):
+		game_manager.setup_minigame_container(minigame_container)
+		printerr("📦 MinijuegoContainer configurado en GameManager")
+	
+	# Verificar que el contenedor está vacío al inicio
+	if minigame_container.get_child_count() > 0:
+		printerr("⚠️ MinijuegoContainer no está vacío al inicio, limpiando...")
+		for child in minigame_container.get_children():
+			child.queue_free()
+	
+	# Iniciar primer minijuego
+	if game_manager and game_manager.has_method("start_first_minigame"):
+		game_manager.start_first_minigame()
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\menu.gd ---
+extends Control
+
+@onready var play_button = $VBoxContainer/Jugar
+
+func _ready():
+	play_button.pressed.connect(_on_play_pressed)
+
+func _on_play_pressed():
+	printerr("🎯 Botón Jugar presionado")
+	Global.reset()
+	get_tree().change_scene_to_file("res://scenes/main_scene.tscn") 
+
+
+func _on_scores_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/top_scores.tscn") 
+
+
+func _on_salir_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/Inicio.tscn") 
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\score_manager.gd ---
+extends Node
+
+var scores: Array = []
+const SAVE_PATH := "res://scores.csv"  # se guardará dentro del proyecto
+
+func _ready():
+	load_scores()
+
+# Agregar puntaje nuevo
+func add_score(player_name: String, score_value: int) -> void:
+	var entry = {"name": player_name, "score": score_value}
+	scores.append(entry)
+	scores.sort_custom(func(a, b): return b["score"] < a["score"]) # orden descendente
+	if scores.size() > 10:
+		scores.resize(10)
+	save_scores()
+
+# Guardar en CSV
+func save_scores() -> void:
+	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if file:
+		for entry in scores:
+			file.store_line("%s,%d" % [entry["name"], entry["score"]])
+		file.close()
+		print("✅ Scores guardados en:", SAVE_PATH)
+	else:
+		push_error("❌ No se pudo guardar el archivo de puntajes.")
+
+# Cargar CSV
+func load_scores() -> void:
+	scores.clear()
+	if not FileAccess.file_exists(SAVE_PATH):
+		print("⚠ No hay archivo de scores aún.")
+		return
+	var file = FileAccess.open(SAVE_PATH, FileAccess.READ)
+	while not file.eof_reached():
+		var line = file.get_line().strip_edges()
+		if line == "":
+			continue
+		var parts = line.split(",")
+		if parts.size() == 2:
+			scores.append({"name": parts[0], "score": int(parts[1])})
+	file.close()
+	print("📂 Scores cargados:", scores)
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\top_scores.gd ---
+extends Control
+
+@onready var score_list: VBoxContainer = $Panel/ScoreList
+@onready var back_button: Button = $Panel/BackButton
+@onready var title_label: Label = $Panel/TitleLabel
+
+func _ready() -> void:
+	load_scores()
+	back_button.text = "Volver al Menú"
+	back_button.pressed.connect(_on_back_pressed)
+
+func load_scores():
+	# limpiar hijos anteriores
+	for child in score_list.get_children():
+		child.queue_free()
+
+	# obtener puntajes desde ScoreManager
+	var scores = ScoreManager.scores
+
+	if scores.is_empty():
+		var empty_label = Label.new()
+		empty_label.text = "No hay puntajes guardados aún."
+		empty_label.add_theme_color_override("font_color", Color(1, 1, 0))
+		score_list.add_child(empty_label)
+	else:
+		for i in range(scores.size()):
+			var entry = scores[i]
+			var label = Label.new()
+			label.text = "%d. %s - %d pts" % [i + 1, entry["name"], entry["score"]]
+			label.add_theme_color_override("font_color", Color(0.0, 0.0, 0.0, 1.0))
+			score_list.add_child(label)
+
+func _on_back_pressed():
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\transition_scene.gd ---
+extends CanvasLayer
+
+var top_curtain: ColorRect
+var bottom_curtain: ColorRect
+var anim: AnimationPlayer
+var score_label: Label
+var audio_player: AudioStreamPlayer
+
+func _ready():
+	printerr("🎬 Transición ULTRA RÁPIDA iniciada")
+	create_everything()
+	setup_curtains()
+	setup_score_display()
+	start_ultra_fast_transition_sequence()
+
+func create_everything():
+	# Crear AnimationPlayer si no existe
+	anim = get_node_or_null("AnimationPlayer")
+	if not anim:
+		anim = AnimationPlayer.new()
+		anim.name = "AnimationPlayer"
+		add_child(anim)
+	
+	# Crear cortinas
+	create_curtains()
+	# Crear animaciones ULTRA RÁPIDAS
+	create_ultra_fast_animations()
+	# Crear AudioStreamPlayer
+	create_audio_player()
+
+func create_audio_player():
+	audio_player = AudioStreamPlayer.new()
+	audio_player.name = "AudioStreamPlayer"
+	add_child(audio_player)
+	var sound = preload("res://assets/assetsgenerales/switch-sound.mp3")  
+	if sound:
+		audio_player.stream = sound
+	else:
+		printerr("❌ Sonido de transición no encontrado")
+
+func create_curtains():
+	# Crear TopCurtain
+	top_curtain = ColorRect.new()
+	top_curtain.name = "TopCurtain"
+	add_child(top_curtain)
+	
+	# Crear BottomCurtain
+	bottom_curtain = ColorRect.new()
+	bottom_curtain.name = "BottomCurtain"
+	add_child(bottom_curtain)
+
+func create_ultra_fast_animations():
+	# Animación ULTRA RÁPIDA curtains_close (0.2 segundos)
+	if not anim.has_animation("curtains_close"):
+		var close_anim = Animation.new()
+		var track_idx = close_anim.add_track(Animation.TYPE_VALUE)
+		close_anim.track_set_path(track_idx, "TopCurtain:position:y")
+		close_anim.track_insert_key(track_idx, 0.0, -400.0)
+		close_anim.track_insert_key(track_idx, 0.2, 0.0)  # Ultra rápido: 0.2 segundos
+		
+		track_idx = close_anim.add_track(Animation.TYPE_VALUE)
+		close_anim.track_set_path(track_idx, "BottomCurtain:position:y")
+		close_anim.track_insert_key(track_idx, 0.0, 800.0)
+		close_anim.track_insert_key(track_idx, 0.2, 400.0)
+		
+		close_anim.length = 0.2
+		anim.add_animation("curtains_close", close_anim)
+	
+	# Animación ULTRA RÁPIDA curtains_open (0.2 segundos)
+	if not anim.has_animation("curtains_open"):
+		var open_anim = Animation.new()
+		var track_idx = open_anim.add_track(Animation.TYPE_VALUE)
+		open_anim.track_set_path(track_idx, "TopCurtain:position:y")
+		open_anim.track_insert_key(track_idx, 0.0, 0.0)
+		open_anim.track_insert_key(track_idx, 0.2, -400.0)
+		
+		track_idx = open_anim.add_track(Animation.TYPE_VALUE)
+		open_anim.track_set_path(track_idx, "BottomCurtain:position:y")
+		open_anim.track_insert_key(track_idx, 0.0, 400.0)
+		open_anim.track_insert_key(track_idx, 0.2, 800.0)
+		
+		open_anim.length = 0.2
+		anim.add_animation("curtains_open", open_anim)
+
+func setup_curtains():
+	var screen_size = get_viewport().get_visible_rect().size
+	
+	top_curtain.size = Vector2(screen_size.x + 100, screen_size.y / 2)
+	top_curtain.position = Vector2(-50, -screen_size.y / 2)
+	top_curtain.color = Color(0, 0, 0, 0.9)
+	
+	bottom_curtain.size = Vector2(screen_size.x + 100, screen_size.y / 2)  
+	bottom_curtain.position = Vector2(-50, screen_size.y)
+	bottom_curtain.color = Color(0, 0, 0, 0.9)
+
+func setup_score_display():
+	# Crear y configurar label de score
+	score_label = Label.new()
+	score_label.name = "ScoreLabel"
+	score_label.text = "SCORE: " + str(Global.score)
+	score_label.add_theme_font_size_override("font_size", 48)
+	score_label.add_theme_color_override("font_color", Color.WHITE)
+	score_label.position = Vector2(50, 50)
+	add_child(score_label)
+	
+	printerr("📊 Score mostrado: " + str(Global.score))
+
+func start_ultra_fast_transition_sequence():
+	printerr("⚡ Transición ULTRA RÁPIDA iniciada (0.45 segundos total)")
+	
+	# 1. CERRAR CORTINAS ULTRA RÁPIDO (0.15s)
+	anim.play("curtains_close")
+	await anim.animation_finished
+	printerr("✅ Cortinas cerradas")
+	
+	# Reproducir sonido exactamente cuando acaba la animación de cerrar
+	if audio_player:
+		audio_player.play()
+		printerr("🔊 Sonido de transición reproducido")
+	
+	# 2. PAUSA MUY CORTA con cortinas cerradas (0.15s)
+	await get_tree().create_timer(0.15).timeout
+	
+	# 3. Notificar al GameManager
+	var game_manager = get_node("/root/GameManager")
+	if game_manager and game_manager.has_method("complete_transition"):
+		game_manager.complete_transition()
+	
+	# 4. ABRIR CORTINAS ULTRA RÁPIDO (0.15s)
+	anim.play("curtains_open") 
+	await anim.animation_finished
+	printerr("✅ Cortinas abiertas")
+	
+	# 5. Eliminar escena de transición
+	queue_free()
