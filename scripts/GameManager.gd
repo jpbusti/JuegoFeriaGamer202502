@@ -2,11 +2,12 @@
 extends Node
 
 var minigame_paths = [
-	"res://minigames/buttonsmasher/scenes/button_masher.tscn",
-	"res://minigames/presionar/scenes/mini_juego_tiempo.tscn", 
-	"res://minigames/saltar/scenes/saltar.tscn",
-	"res://minigames/contraseña/scenes/principal.tscn",
-	"res://minigames/popup/scenes/main.tscn"
+	"res://minigames/buttonsmasher/scenes/MainButtonMasher.tscn",
+	"res://minigames/contraseña/scenes/MainContraseña.tscn",
+	"res://minigames/popup/scenes/PopupMain.tscn",
+	"res://minigames/presionar/scenes/MainPresionar.tscn",
+	"res://minigames/saltar/scenes/MainSaltar.tscn"
+
 ]
 
 var current_minigame: Node = null
