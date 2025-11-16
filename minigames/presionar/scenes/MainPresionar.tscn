@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://d1e5yw3llnfkb"]
 
-[ext_resource type="Script" uid="uid://li57xt0swjem" path="res://minigames/presionar/scripts/mini_juego_tiempo.gd" id="1_5tt23"]
+[ext_resource type="Script" uid="uid://li57xt0swjem" path="res://minigames/presionar/scripts/MainPresionar.gd" id="1_5tt23"]
 [ext_resource type="Texture2D" uid="uid://qeehuymiadnl" path="res://assets/presionar/fondo_computador8b.png" id="2_vnim5"]
 [ext_resource type="Texture2D" uid="uid://bywn4eonqr88u" path="res://assets/presionar/Sprite-0002.png" id="3_kp0qk"]
 [ext_resource type="Texture2D" uid="uid://7cfwbuoeucqu" path="res://assets/buttonsmasher/Virus.png" id="4_w0hnc"]

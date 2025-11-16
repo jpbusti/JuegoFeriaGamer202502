@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://d2iunvqycthx2"]
 
-[ext_resource type="Script" uid="uid://doubcq8cocwl4" path="res://minigames/popup/scripts/main.gd" id="1_27hfj"]
+[ext_resource type="Script" uid="uid://doubcq8cocwl4" path="res://minigames/popup/scripts/PopupMain.gd" id="1_27hfj"]
 [ext_resource type="FontFile" uid="uid://pd6lbo5aradf" path="res://assets/popup/fonts/Funky Catch.otf" id="2_7xgtf"]
 [ext_resource type="Texture2D" uid="uid://daof5stdwbi2j" path="res://assets/popup/img/DESKTOP.png" id="3_bo7ua"]
 [ext_resource type="AudioStream" uid="uid://j5fhmw2dv6e8" path="res://assets/popup/audio/win.ogg" id="4_gdw6w"]

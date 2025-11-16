@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://ci4tws2vtsrby"]
 
-[ext_resource type="Script" uid="uid://ch5ll77dhl2qx" path="res://minigames/contraseña/scripts/principal.gd" id="1_l8jow"]
+[ext_resource type="Script" uid="uid://ch5ll77dhl2qx" path="res://minigames/contraseña/scripts/MainContraseña.gd" id="1_l8jow"]
 [ext_resource type="FontFile" uid="uid://pkt0aclf3ymx" path="res://assets/contraseña/fonts/BoldPixels.ttf" id="2_bfvn4"]
 [ext_resource type="AudioStream" uid="uid://bv8jhrm6hd0ee" path="res://assets/contraseña/audio/PasswordBGM.ogg" id="3_agaw1"]
 [ext_resource type="AudioStream" uid="uid://c7akslcdhecih" path="res://assets/contraseña/audio/Correct.ogg" id="4_rvhwq"]

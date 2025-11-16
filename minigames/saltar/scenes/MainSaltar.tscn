@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://ckmk2smigdm4g"]
 
-[ext_resource type="Script" uid="uid://hur7gm8bpywp" path="res://minigames/saltar/scripts/saltar.gd" id="1_jjv5x"]
+[ext_resource type="Script" uid="uid://hur7gm8bpywp" path="res://minigames/saltar/scripts/MainSaltar.gd" id="1_jjv5x"]
 [ext_resource type="PackedScene" uid="uid://ce6te6cn26so7" path="res://minigames/saltar/scenes/player.tscn" id="2_2iwrr"]
 [ext_resource type="PackedScene" uid="uid://cbyqdpufd7bo8" path="res://minigames/saltar/scenes/ui.tscn" id="3_mrnyk"]
 [ext_resource type="Texture2D" uid="uid://o14kfjxi3yvx" path="res://assets/saltar/windows95v2.jpg" id="4_83oyn"]

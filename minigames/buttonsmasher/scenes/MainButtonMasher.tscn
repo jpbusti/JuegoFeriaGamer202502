@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://7jt1522jhnqf"]
 
-[ext_resource type="Script" uid="uid://bydul6ebt1viq" path="res://minigames/buttonsmasher/scripts/button_masher.gd" id="1_c635l"]
+[ext_resource type="Script" uid="uid://bydul6ebt1viq" path="res://minigames/buttonsmasher/scripts/MainButtonMasher.gd" id="1_c635l"]
 [ext_resource type="PackedScene" uid="uid://3r18gfdd2hvf" path="res://scenes/AniDynamite.tscn" id="2_kyhgc"]
 [ext_resource type="Texture2D" uid="uid://7cfwbuoeucqu" path="res://assets/buttonsmasher/Virus.png" id="3_uxcjj"]
 [ext_resource type="AudioStream" uid="uid://b64027kfku64i" path="res://assets/buttonsmasher/boom5.wav" id="4_t5udy"]
