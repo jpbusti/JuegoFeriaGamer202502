@@ -1,18 +1,18 @@
 [gd_scene load_steps=7 format=3 uid="uid://ckmk2smigdm4g"]
 
-[ext_resource type="Script" uid="uid://hur7gm8bpywp" path="res://minigames/saltar/scripts/saltar.gd" id="1_iqjwo"]
-[ext_resource type="PackedScene" uid="uid://ce6te6cn26so7" path="res://minigames/saltar/scenes/player.tscn" id="2_53xnk"]
-[ext_resource type="PackedScene" uid="uid://cbyqdpufd7bo8" path="res://minigames/saltar/scenes/ui.tscn" id="3_yggev"]
-[ext_resource type="Texture2D" uid="uid://o14kfjxi3yvx" path="res://assets/saltar/windows95v2.jpg" id="4_msq6k"]
-[ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="5_eeqk6"]
+[ext_resource type="Script" uid="uid://hur7gm8bpywp" path="res://minigames/saltar/scripts/saltar.gd" id="1_jjv5x"]
+[ext_resource type="PackedScene" uid="uid://ce6te6cn26so7" path="res://minigames/saltar/scenes/player.tscn" id="2_2iwrr"]
+[ext_resource type="PackedScene" uid="uid://cbyqdpufd7bo8" path="res://minigames/saltar/scenes/ui.tscn" id="3_mrnyk"]
+[ext_resource type="Texture2D" uid="uid://o14kfjxi3yvx" path="res://assets/saltar/windows95v2.jpg" id="4_83oyn"]
+[ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="5_yb7n7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7mycd"]
 size = Vector2(1147, 76)
 
-[node name="Main" type="Node2D"]
-script = ExtResource("1_iqjwo")
+[node name="MainSaltar" type="Node2D"]
+script = ExtResource("1_jjv5x")
 
-[node name="Player" parent="." groups=["player"] instance=ExtResource("2_53xnk")]
+[node name="Player" parent="." groups=["player"] instance=ExtResource("2_2iwrr")]
 
 [node name="Ground" type="StaticBody2D" parent="."]
 position = Vector2(22, 622)
@@ -28,16 +28,16 @@ autostart = true
 [node name="CarDetectionTimer" type="Timer" parent="."]
 wait_time = 0.1
 
-[node name="UI" parent="." instance=ExtResource("3_yggev")]
+[node name="UI" parent="." instance=ExtResource("3_mrnyk")]
 visible = false
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = -10
 position = Vector2(577, 322)
 scale = Vector2(0.89843744, 0.8949999)
-texture = ExtResource("4_msq6k")
+texture = ExtResource("4_83oyn")
 
-[node name="AniBomba" parent="." instance=ExtResource("5_eeqk6")]
+[node name="AniBomba" parent="." instance=ExtResource("5_yb7n7")]
 position = Vector2(585.74994, 588.99994)
 scale = Vector2(1.0108505, 0.8949999)
 frame_progress = 0.6093339

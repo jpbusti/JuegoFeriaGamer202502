@@ -1,20 +1,20 @@
 [gd_scene load_steps=11 format=3 uid="uid://d2iunvqycthx2"]
 
-[ext_resource type="Script" uid="uid://doubcq8cocwl4" path="res://minigames/popup/scripts/main.gd" id="1_2ubv5"]
-[ext_resource type="FontFile" uid="uid://pd6lbo5aradf" path="res://assets/popup/fonts/Funky Catch.otf" id="2_wkhj4"]
-[ext_resource type="Texture2D" uid="uid://daof5stdwbi2j" path="res://assets/popup/img/DESKTOP.png" id="3_3usc2"]
-[ext_resource type="AudioStream" uid="uid://j5fhmw2dv6e8" path="res://assets/popup/audio/win.ogg" id="4_covsg"]
-[ext_resource type="Texture2D" uid="uid://dpd74rwckcvpd" path="res://assets/popup/img/virus.png" id="5_o55ro"]
-[ext_resource type="AudioStream" uid="uid://dljgwa738mb7u" path="res://assets/popup/audio/fail.ogg" id="6_2kchp"]
-[ext_resource type="AudioStream" uid="uid://x15cklbitj56" path="res://assets/popup/audio/laugh.ogg" id="7_tbxah"]
-[ext_resource type="AudioStream" uid="uid://c2pi6tnlkppoc" path="res://assets/popup/audio/BGM.ogg" id="8_a5x14"]
-[ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="9_wkhj4"]
+[ext_resource type="Script" uid="uid://doubcq8cocwl4" path="res://minigames/popup/scripts/main.gd" id="1_27hfj"]
+[ext_resource type="FontFile" uid="uid://pd6lbo5aradf" path="res://assets/popup/fonts/Funky Catch.otf" id="2_7xgtf"]
+[ext_resource type="Texture2D" uid="uid://daof5stdwbi2j" path="res://assets/popup/img/DESKTOP.png" id="3_bo7ua"]
+[ext_resource type="AudioStream" uid="uid://j5fhmw2dv6e8" path="res://assets/popup/audio/win.ogg" id="4_gdw6w"]
+[ext_resource type="Texture2D" uid="uid://dpd74rwckcvpd" path="res://assets/popup/img/virus.png" id="5_v7ojk"]
+[ext_resource type="AudioStream" uid="uid://dljgwa738mb7u" path="res://assets/popup/audio/fail.ogg" id="6_56kve"]
+[ext_resource type="AudioStream" uid="uid://x15cklbitj56" path="res://assets/popup/audio/laugh.ogg" id="7_hqfph"]
+[ext_resource type="AudioStream" uid="uid://c2pi6tnlkppoc" path="res://assets/popup/audio/BGM.ogg" id="8_w1uvg"]
+[ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="9_7t2yy"]
 
 [sub_resource type="FontVariation" id="FontVariation_jyhfs"]
-base_font = ExtResource("2_wkhj4")
+base_font = ExtResource("2_7xgtf")
 
-[node name="Main" type="Node2D"]
-script = ExtResource("1_2ubv5")
+[node name="PopupMain" type="Node2D"]
+script = ExtResource("1_27hfj")
 
 [node name="GameTimer" type="Timer" parent="."]
 wait_time = 5.0
@@ -37,29 +37,29 @@ one_shot = true
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(576.25, 324)
 scale = Vector2(1.0199292, 1)
-texture = ExtResource("3_3usc2")
+texture = ExtResource("3_bo7ua")
 
 [node name="WinSound" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("4_covsg")
+stream = ExtResource("4_gdw6w")
 
 [node name="VirusSprite" type="Sprite2D" parent="."]
 visible = false
 z_index = 20
 position = Vector2(574, 326)
-texture = ExtResource("5_o55ro")
+texture = ExtResource("5_v7ojk")
 
 [node name="FailSound" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("6_2kchp")
+stream = ExtResource("6_56kve")
 
 [node name="LaughSound" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("7_tbxah")
+stream = ExtResource("7_hqfph")
 
 [node name="BgmPlayer" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("8_a5x14")
+stream = ExtResource("8_w1uvg")
 autoplay = true
 parameters/looping = true
 
-[node name="AniBomba" parent="." instance=ExtResource("9_wkhj4")]
+[node name="AniBomba" parent="." instance=ExtResource("9_7t2yy")]
 
 [connection signal="timeout" from="GameTimer" to="." method="_on_game_timer_timeout"]
 [connection signal="timeout" from="RestartTimer" to="." method="_on_restart_timer_timeout"]
