@@ -22,9 +22,9 @@ func save_scores() -> void:
 			file.store_line("%s,%d" % [current_node.player_name, current_node.score])
 			current_node = current_node.next 
 		file.close()
-		print("✅ Scores guardados en:", SAVE_PATH)
+		print("Scores guardados en:", SAVE_PATH)
 	else:
-		push_error("❌ No se pudo guardar el archivo de puntajes.")
+		push_error("No se pudo guardar el archivo de puntajes.")
 
 
 func load_scores() -> void:

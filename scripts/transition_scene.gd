@@ -7,10 +7,8 @@ var score_label: Label
 var audio_player: AudioStreamPlayer
 
 func _ready():
-	printerr("🎬 Transición ULTRA RÁPIDA iniciada")
 	create_everything()
 	setup_curtains()
-	setup_score_display()
 	start_ultra_fast_transition_sequence()
 
 func create_everything():
@@ -35,8 +33,6 @@ func create_audio_player():
 	var sound = preload("res://assets/assetsgenerales/switch-sound.mp3")  
 	if sound:
 		audio_player.stream = sound
-	else:
-		printerr("❌ Sonido de transición no encontrado")
 
 func create_curtains():
 	# Crear TopCurtain
@@ -93,17 +89,8 @@ func setup_curtains():
 	bottom_curtain.position = Vector2(-50, screen_size.y)
 	bottom_curtain.color = Color(0, 0, 0, 0.9)
 
-func setup_score_display():
-	# Crear y configurar label de score
-	score_label = Label.new()
-	score_label.name = "ScoreLabel"
-	score_label.text = "SCORE: " + str(Global.score)
-	score_label.add_theme_font_size_override("font_size", 48)
-	score_label.add_theme_color_override("font_color", Color.WHITE)
-	score_label.position = Vector2(50, 50)
-	add_child(score_label)
+
 	
-	printerr("📊 Score mostrado: " + str(Global.score))
 
 func start_ultra_fast_transition_sequence():
 	printerr("⚡ Transición ULTRA RÁPIDA iniciada (0.45 segundos total)")
@@ -111,12 +98,11 @@ func start_ultra_fast_transition_sequence():
 	# 1. CERRAR CORTINAS ULTRA RÁPIDO (0.15s)
 	anim.play("curtains_close")
 	await anim.animation_finished
-	printerr("✅ Cortinas cerradas")
+	printerr("Cortinas cerradas")
 	
 	# Reproducir sonido exactamente cuando acaba la animación de cerrar
 	if audio_player:
 		audio_player.play()
-		printerr("🔊 Sonido de transición reproducido")
 	
 	# 2. PAUSA MUY CORTA con cortinas cerradas (0.15s)
 	await get_tree().create_timer(0.15).timeout
@@ -129,7 +115,6 @@ func start_ultra_fast_transition_sequence():
 	# 4. ABRIR CORTINAS ULTRA RÁPIDO (0.15s)
 	anim.play("curtains_open") 
 	await anim.animation_finished
-	printerr("✅ Cortinas abiertas")
 	
 	# 5. Eliminar escena de transición
 	queue_free()

@@ -32,7 +32,7 @@ func apply_difficulty_settings():
 	if zona:
 		zona.scale = Vector2(1.0 / nivel_dificultad, 1.0)
 	
-	printerr("🎯 Dificultad: " + str(nivel_dificultad) + ", Velocidad: " + str(velocidad_actual))
+	printerr("Dificultad: " + str(nivel_dificultad) + ", Velocidad: " + str(velocidad_actual))
 
 func reset_game():
 	acierto = false
@@ -88,15 +88,15 @@ func comprobar_acierto():
 
 	if zona_rect.intersects(indicador_rect):
 		acierto = true
-		printerr("✅ ACIERTO!")
+		printerr("ACIERTO")
 	else:
 		acierto = false
-		printerr("❌ FALLO")
+		printerr("FALLO")
 	
 	juego_activo = false
 
 func _on_time_out():
-	printerr("⏰ Minijuego Tiempo terminado - Ganó: " + str(acierto))
+	printerr("Minijuego Tiempo terminado - Ganó: " + str(acierto))
 	juego_activo = false
 	
 	var game_manager = get_node("/root/GameManager")

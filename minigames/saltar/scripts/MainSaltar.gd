@@ -84,13 +84,13 @@ func _spawn_car():
 	if not car.is_connected("car_dodged", Callable(self, "_on_car_dodged")):
 		car.connect("car_dodged", Callable(self, "_on_car_dodged"))
 	
-	printerr("🚗 Carro " + str(cars_spawned) + "/" + str(max_cars) + " generado")
+	printerr("Carro " + str(cars_spawned) + "/" + str(max_cars) + " generado")
 
 func _on_car_player_hit(_body: Node, car_instance: Node):
 	if not microgame_active:
 		return
 	
-	printerr("💥 Jugador golpeado")
+	printerr("Jugador golpeado")
 	victory = false
 	microgame_active = false
 	car_spawn_timer.stop()
@@ -102,12 +102,12 @@ func _on_car_dodged():
 	if not microgame_active:
 		return
 	
-	printerr("✅ Auto esquivado")
+	printerr("Auto esquivado")
 	victory = true
 	# No detenemos el juego aquí para permitir múltiples carros
 
 func _on_time_out():
-	printerr("⏰ Saltar terminado - Ganó: " + str(victory) + ", Carros: " + str(cars_spawned))
+	printerr("Saltar terminado - Ganó: " + str(victory) + ", Carros: " + str(cars_spawned))
 	microgame_active = false
 	car_spawn_timer.stop()
 	

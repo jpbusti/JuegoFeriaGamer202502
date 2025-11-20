@@ -26,10 +26,9 @@ func start_game():
 	# Generar opciones
 	spawn_options()
 	
-	printerr("⏰ CONTRASEÑA - 5 segundos iniciados")
 
 func spawn_options():
-	var passwords = ["123456", "contraseÃąa", ")T5oh27X2S\\Q"]
+	var passwords = ["123456", "contraseña", ")T5oh27X2S\\Q"]
 	passwords.shuffle()
 	
 	var positions = [Vector2(350, 150), Vector2(350, 250), Vector2(350, 350)]
@@ -52,7 +51,6 @@ func win_game():
 	victory = true
 	game_timer.stop()
 	
-	printerr("✅ CONTRASEÑA - GANÓ")
 	
 	if win_sound:
 		win_sound.play()
@@ -70,7 +68,6 @@ func lose_game():
 	victory = false
 	game_timer.stop()
 	
-	printerr("❌ CONTRASEÑA - PERDIÓ")
 	
 	if lose_sound:
 		lose_sound.play()
@@ -84,11 +81,9 @@ func lose_game():
 
 func _on_game_timer_timeout():
 	if not game_over:
-		printerr("⏰ CONTRASEÑA - TIEMPO AGOTADO")
 		lose_game()
 
 func notify_game_manager():
-	printerr("📢 CONTRASEÑA - Notificando al GameManager")
 	var game_manager = get_node("/root/GameManager")
 	if game_manager and game_manager.has_method("process_minigame_result"):
 		game_manager.process_minigame_result(victory)

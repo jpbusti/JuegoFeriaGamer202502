@@ -39,7 +39,7 @@ var victory: bool = false
 var timer: Timer
 
 func _ready():
-	printerr("🎮 Minijuego Popup iniciado")
+	printerr("Minijuego Popup iniciado")
 	apply_difficulty_settings()
 	reset_game()
 	start_game()
@@ -48,7 +48,7 @@ func apply_difficulty_settings():
 	# Configurar tiempo según dificultad (menos tiempo en niveles más altos)
 	var tiempo_actual = TIEMPO_BASE - (Global.score * REDUCCION_TIEMPO)
 	tiempo_actual = max(tiempo_actual, 2.0)
-	printerr("🎯 Dificultad: " + str(Global.score) + ", Tiempo: " + str(tiempo_actual))
+	printerr("Dificultad: " + str(Global.score) + ", Tiempo: " + str(tiempo_actual))
 
 func reset_game():
 	game_over = false
@@ -76,12 +76,9 @@ func start_game():
 	# Animación bomba
 	if ani_bomba and ani_bomba.has_method("play"):
 		ani_bomba.play("anibomba")
-		printerr("💣 Animación de bomba iniciada")
 
-	# Generar popups
 	spawn_popups()
 	
-	printerr("⏰ Popup - Juego configurado para 5.0 segundos")
 
 func spawn_popups() -> void:
 	for i in 3:
@@ -91,7 +88,7 @@ func spawn_popups() -> void:
 		new_popup.close_fail.connect(_on_Popup_close_fail)
 		add_child(new_popup)
 	
-	printerr("📧 3 popups generados")
+	printerr("3 popups generados")
 
 # --- Lógica de Ganar/Perder ---
 
@@ -99,14 +96,14 @@ func _on_Popup_close_success() -> void:
 	if game_over: return
 
 	popups_restantes -= 1
-	printerr("✅ Popup cerrado - Faltan: " + str(popups_restantes))
+	printerr("Popup cerrado - Faltan: " + str(popups_restantes))
 	
 	if popups_restantes == 0:
 		win_game()
 
 func _on_Popup_close_fail() -> void:
 	if game_over: return
-	printerr("❌ Clic en lugar equivocado")
+	printerr("Clic en lugar equivocado")
 	lose_game()
 
 func win_game():
@@ -156,19 +153,19 @@ func lose_game():
 	notify_game_manager()
 
 func notify_game_manager():
-	printerr("🎊 Popup - Resultado: " + ("GANÓ" if victory else "PERDIÓ"))
+	printerr("Popup - Resultado: " + ("GANÓ" if victory else "PERDIÓ"))
 	
 	var game_manager = get_node("/root/GameManager")
 	if game_manager and game_manager.has_method("process_minigame_result"):
 		game_manager.process_minigame_result(victory)
 	else:
-		printerr("❌ GameManager no encontrado")
+		printerr("GameManager no encontrado")
 
 # --- Temporizadores ---
 
 func _on_time_out():
 	if not game_over:
-		printerr("⏰ Tiempo agotado - Popup")
+		printerr("Tiempo agotado - Popup")
 		lose_game()
 
 func _on_GameTimer_timeout():

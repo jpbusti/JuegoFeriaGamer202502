@@ -13,9 +13,7 @@ class ScoreNode:
 var head: ScoreNode = null 
 var size: int = 0
 
-# --- MÉTODOS DEL TAD ---
 
-#(Mayor a menor)
 func insert_sorted(p_name: String, p_score: int) -> void:
 	var new_node = ScoreNode.new(p_name, p_score)
 	
@@ -46,7 +44,6 @@ func _remove_last():
 	var current = head
 	while current.next.next != null:
 		current = current.next
-	# Desconectar el último
 	current.next = null
 	size -= 1
 
