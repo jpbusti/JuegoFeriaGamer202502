@@ -1,20 +1,29 @@
-[gd_scene load_steps=2 format=3 uid="uid://g7kkncna1d0p"]
+[gd_scene load_steps=4 format=3 uid="uid://g7kkncna1d0p"]
 
 [ext_resource type="Script" uid="uid://k6cm5a1wbg2h" path="res://scripts/game_over.gd" id="1_xeevv"]
+[ext_resource type="Texture2D" uid="uid://bs4clicw48cw1" path="res://assets/assetsgenerales/menu.png" id="2_tbwuq"]
+[ext_resource type="FontFile" uid="uid://cohegf83vwsfe" path="res://assets/assetsgenerales/Daydream DEMO.otf" id="2_wqhvx"]
 
 [node name="GameOver" type="Node2D"]
+position = Vector2(576, 324)
 script = ExtResource("1_xeevv")
 
+[node name="Menu" type="Sprite2D" parent="."]
+texture = ExtResource("2_tbwuq")
+
 [node name="FinalScoreLabel" type="Label" parent="."]
-anchors_preset = 5
+anchors_preset = 7
 anchor_left = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-offset_left = 517.0
-offset_top = 310.0
-offset_right = 615.0
-offset_bottom = 371.5
+anchor_bottom = 1.0
+offset_left = -168.0
+offset_top = -180.0
+offset_right = 163.0
+offset_bottom = -118.5
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("2_wqhvx")
 
 [node name="Label" type="Label" parent="."]
 anchors_preset = 8
@@ -22,11 +31,29 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 533.0
-offset_top = 276.0
-offset_right = 620.0
-offset_bottom = 325.0
+offset_left = -200.0
+offset_top = -71.5
+offset_right = 200.0
+offset_bottom = 71.5
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_wqhvx")
+theme_override_font_sizes/font_size = 43
 text = "Game Over
 "
+
+[node name="NameInput" type="LineEdit" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -136.0
+offset_top = 68.0
+offset_right = 147.0
+offset_bottom = 102.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_wqhvx")
+placeholder_text = "Escribe tu nombre"

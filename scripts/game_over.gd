@@ -1,16 +1,25 @@
 extends Node2D
 
 @onready var score_label: Label = $FinalScoreLabel
+@onready var name_input: LineEdit = $NameInput 
 
 func _ready():
-	score_label.text = "Puntuación final: " + str(Global.score)
-	printerr("💀 GAME OVER - Score: " + str(Global.score))
+	# Mostramos el puntaje
+	score_label.text = "Puntuacion final:   " + str(Global.score)
+
+	name_input.text_submitted.connect(_on_name_submitted)
 	
-	# Guardar puntaje
-	var player_name = "Jugador"
-	if Engine.has_singleton("ScoreManager"):
-		ScoreManager.add_score(player_name, Global.score)
+	name_input.grab_focus()
+
+func _on_name_submitted(new_text: String):
+	if new_text.strip_edges() == "":
+		return 
+	ScoreManager.add_score(new_text, Global.score)
+	
+	print("Guardando score para: ", new_text)
+	
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func _input(event):
-	if event.is_action_pressed("ui_accept"):
+	if event.is_action_pressed("ui_cancel"): 
 		get_tree().change_scene_to_file("res://scenes/menu.tscn")

@@ -1,4 +1,4 @@
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\buttonsmasher\scripts\button_masher.gd ---
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\buttonsmasher\scripts\MainButtonMasher.gd ---
 extends Node2D
 
 # CONFIGURACIÓN DE DIFICULTAD
@@ -72,92 +72,7 @@ func _on_time_out():
 	var game_manager = get_node("/root/GameManager")
 	if game_manager and game_manager.has_method("process_minigame_result"):
 		game_manager.process_minigame_result(exploded)
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\mensaje.gd ---
-extends Label
-
-# Parámetros ajustables desde el Inspector
-@export var bob_amplitude: float = 3.0        # píxeles verticales máximos
-@export var bob_frequency: float = 1.8        # ciclos por segundo (más -> más rápido)
-@export var rotate_amplitude_deg: float = 2.5 # grados máximos de rotación
-@export var rotate_speed: float = 0.7         # velocidad de oscilación de rotación
-@export var scale_amplitude: float = 0.04     # variación relativa de escala (0.04 = ±4%)
-@export var color_pulse_intensity: float = 0.10 # cuánto cambia el color (0..1)
-@export var random_phase: bool = true         # fase aleatoria para no repetir siempre igual
-
-# Internals
-var _t: float = 0.0
-var _base_pos: Vector2 = Vector2.ZERO
-var _base_rotation: float = 0.0
-var _base_scale: Vector2 = Vector2.ONE
-var _phase_offset: float = 0.0
-var _base_modulate: Color = Color(1,1,1,1)
-
-func _ready() -> void:
-	# Guardamos estado inicial
-	_base_pos = position
-	_base_rotation = rotation_degrees
-	_base_scale = scale
-	_base_modulate = modulate
-
-	if random_phase:
-		var rg: RandomNumberGenerator = RandomNumberGenerator.new()
-		rg.randomize()
-		_phase_offset = rg.randf_range(0.0, TAU)
-
-	set_process(true)
-
-func _process(delta: float) -> void:
-	_t += delta
-
-	# --- Bobbing (sube/baja) ---
-	var bob: float = sin((_t * bob_frequency * TAU) + _phase_offset) * bob_amplitude
-	position = _base_pos + Vector2(0.0, bob)
-
-	# --- Rotación sutil ---
-	var rot: float = sin((_t * rotate_speed * TAU) + _phase_offset * 0.7) * rotate_amplitude_deg
-	rotation_degrees = _base_rotation + rot
-
-	# --- Pulso de escala (ligero) ---
-	var s: float = 1.0 + sin(_t * bob_frequency * TAU + _phase_offset * 0.5) * scale_amplitude
-	scale = _base_scale * s
-
-	# --- Pulso de color (opcional, muy sutil) ---
-	var pulse: float = (sin((_t * 1.5) + _phase_offset) * 0.5 + 0.5) * color_pulse_intensity
-	modulate = Color(
-		clamp(_base_modulate.r + pulse, 0.0, 1.0),
-		clamp(_base_modulate.g + pulse, 0.0, 1.0),
-		clamp(_base_modulate.b + pulse, 0.0, 1.0),
-		_base_modulate.a
-	)
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\password_game.gd ---
-extends Control
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\password_option.gd ---
-# password_option.gd - MANTENER EL ORIGINAL QUE FUNCIONABA
-extends Area2D
-
-signal chose_correct
-signal chose_wrong
-
-var is_secure: bool = false
-var password_text: String = ""
-
-@onready var password_text_label: Label = $PasswordText
-
-func _ready():
-	password_text_label.text = password_text
-
-func set_password_text(text: String):
-	password_text = text
-	if password_text_label:
-		password_text_label.text = password_text
-
-func _on_input_event(viewport, event, shape_idx):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if is_secure:
-			chose_correct.emit()
-		else:
-			chose_wrong.emit()
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\principal.gd ---
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\MainContrase�a.gd ---
 # principal.gd - VERSIÓN SUPER SIMPLE
 extends Node2D
 
@@ -252,7 +167,111 @@ func notify_game_manager():
 	var game_manager = get_node("/root/GameManager")
 	if game_manager and game_manager.has_method("process_minigame_result"):
 		game_manager.process_minigame_result(victory)
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\popup\scripts\main.gd ---
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\mensaje.gd ---
+extends Label
+
+# Parámetros ajustables desde el Inspector
+@export var bob_amplitude: float = 3.0        # píxeles verticales máximos
+@export var bob_frequency: float = 1.8        # ciclos por segundo (más -> más rápido)
+@export var rotate_amplitude_deg: float = 2.5 # grados máximos de rotación
+@export var rotate_speed: float = 0.7         # velocidad de oscilación de rotación
+@export var scale_amplitude: float = 0.04     # variación relativa de escala (0.04 = ±4%)
+@export var color_pulse_intensity: float = 0.10 # cuánto cambia el color (0..1)
+@export var random_phase: bool = true         # fase aleatoria para no repetir siempre igual
+
+# Internals
+var _t: float = 0.0
+var _base_pos: Vector2 = Vector2.ZERO
+var _base_rotation: float = 0.0
+var _base_scale: Vector2 = Vector2.ONE
+var _phase_offset: float = 0.0
+var _base_modulate: Color = Color(1,1,1,1)
+
+func _ready() -> void:
+	# Guardamos estado inicial
+	_base_pos = position
+	_base_rotation = rotation_degrees
+	_base_scale = scale
+	_base_modulate = modulate
+
+	if random_phase:
+		var rg: RandomNumberGenerator = RandomNumberGenerator.new()
+		rg.randomize()
+		_phase_offset = rg.randf_range(0.0, TAU)
+
+	set_process(true)
+
+func _process(delta: float) -> void:
+	_t += delta
+
+	# --- Bobbing (sube/baja) ---
+	var bob: float = sin((_t * bob_frequency * TAU) + _phase_offset) * bob_amplitude
+	position = _base_pos + Vector2(0.0, bob)
+
+	# --- Rotación sutil ---
+	var rot: float = sin((_t * rotate_speed * TAU) + _phase_offset * 0.7) * rotate_amplitude_deg
+	rotation_degrees = _base_rotation + rot
+
+	# --- Pulso de escala (ligero) ---
+	var s: float = 1.0 + sin(_t * bob_frequency * TAU + _phase_offset * 0.5) * scale_amplitude
+	scale = _base_scale * s
+
+	# --- Pulso de color (opcional, muy sutil) ---
+	var pulse: float = (sin((_t * 1.5) + _phase_offset) * 0.5 + 0.5) * color_pulse_intensity
+	modulate = Color(
+		clamp(_base_modulate.r + pulse, 0.0, 1.0),
+		clamp(_base_modulate.g + pulse, 0.0, 1.0),
+		clamp(_base_modulate.b + pulse, 0.0, 1.0),
+		_base_modulate.a
+	)
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\password_game.gd ---
+extends Control
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\contrase�a\scripts\password_option.gd ---
+# password_option.gd - MANTENER EL ORIGINAL QUE FUNCIONABA
+extends Area2D
+
+signal chose_correct
+signal chose_wrong
+
+var is_secure: bool = false
+var password_text: String = ""
+
+@onready var password_text_label: Label = $PasswordText
+
+func _ready():
+	password_text_label.text = password_text
+
+func set_password_text(text: String):
+	password_text = text
+	if password_text_label:
+		password_text_label.text = password_text
+
+func _on_input_event(viewport, event, shape_idx):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if is_secure:
+			chose_correct.emit()
+		else:
+			chose_wrong.emit()
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\popup\scripts\popup.gd ---
+extends Area2D
+
+signal close_success
+signal close_fail
+
+# ¡Ya no necesitamos la función set_texture!
+# La textura se asigna directamente en el editor de cada escena.
+
+# Esta función se llama cuando se hace clic en el CUERPO del pop-up
+func _on_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		emit_signal("close_fail")
+
+# Esta función se llama cuando se hace clic en la "X"
+func _on_close_button_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		emit_signal("close_success")
+		queue_free()
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\popup\scripts\PopupMain.gd ---
 extends Node2D
 
 # CONFIGURACIÓN DE DIFICULTAD
@@ -429,26 +448,7 @@ func _on_time_out():
 func _on_GameTimer_timeout():
 	# Este timer puede usarse para actualizar una barra de tiempo visual
 	pass
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\popup\scripts\popup.gd ---
-extends Area2D
-
-signal close_success
-signal close_fail
-
-# ¡Ya no necesitamos la función set_texture!
-# La textura se asigna directamente en el editor de cada escena.
-
-# Esta función se llama cuando se hace clic en el CUERPO del pop-up
-func _on_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		emit_signal("close_fail")
-
-# Esta función se llama cuando se hace clic en la "X"
-func _on_close_button_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		emit_signal("close_success")
-		queue_free()
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\presionar\scripts\mini_juego_tiempo.gd ---
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\presionar\scripts\MainPresionar.gd ---
 extends Node2D
 
 # CONFIGURACIÓN DE DIFICULTAD
@@ -612,9 +612,7 @@ func _physics_process(delta: float) -> void:
 		printerr("🚀 SALTO GARANTIZADO - VelY: " + str(velocity.y))
 	
 	move_and_slide()
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\saltar\scripts\player.gd ---
-extends Node2D
---- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\saltar\scripts\saltar.gd ---
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\saltar\scripts\MainSaltar.gd ---
 extends Node2D
 
 # CONFIGURACIÓN DE DIFICULTAD - FÁCIL DE MODIFICAR
@@ -737,6 +735,8 @@ func _on_time_out():
 	var game_manager = get_node("/root/GameManager")
 	if game_manager and game_manager.has_method("process_minigame_result"):
 		game_manager.process_minigame_result(victory)
+--- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\minigames\saltar\scripts\player.gd ---
+extends Node2D
 --- Archivo: C:\Users\RYZEN\Desktop\Juegoferia\JuegoFeriaGamer202502\scripts\AniDynamite.gd ---
 extends AnimatedSprite2D
 
