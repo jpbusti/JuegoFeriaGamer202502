@@ -13,6 +13,9 @@ var exploded: bool = false
 var meta_actual: int
 
 func _ready():
+	# --- CORRECCIÓN CLAVE ---
+	Global.round_failed = true
+	# ------------------------
 	apply_difficulty_settings()
 	start_game()
 
@@ -35,9 +38,8 @@ func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		press_count += 1
 		
-		# Feedback visual del click
 		if virus: virus.scale += Vector2(0.05, 0.05)
-		if blaster: blaster.play("press")
+		if blaster and blaster.has_method("play"): blaster.play("press")
 		
 		if press_count >= meta_actual:
 			_on_win()
@@ -47,9 +49,12 @@ func _on_win():
 	printerr("✅ Virus explotado - WIN")
 	Global.increase_score()
 	
+	# --- CORRECCIÓN CLAVE ---
+	Global.round_failed = false
+	# ------------------------
+	
 	if explosion_sound: explosion_sound.play()
 	
-	# Animación de muerte del virus
 	if virus:
 		var tween = create_tween()
 		tween.tween_property(virus, "scale", virus.scale * 1.5, 0.3)

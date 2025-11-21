@@ -1,6 +1,5 @@
 extends Node2D
 
-# Referencias
 const POPUP_SCENES = [
 	preload("res://minigames/popup/scenes/popup_felicidades.tscn"),
 	preload("res://minigames/popup/scenes/popup_descarga.tscn"),
@@ -19,6 +18,9 @@ var popups_restantes: int = 3
 var game_over: bool = false
 
 func _ready():
+	# --- CORRECCIÓN CLAVE ---
+	Global.round_failed = true 
+	# ------------------------
 	start_game()
 
 func start_game():
@@ -47,7 +49,7 @@ func _on_Popup_close_success() -> void:
 
 func _on_Popup_close_fail() -> void:
 	if game_over: return
-	lose_game() # Si haces clic mal, pierdes inmediatamente esta ronda
+	lose_game() 
 
 func win_game():
 	if game_over: return
@@ -56,16 +58,25 @@ func win_game():
 	printerr("✅ Popups limpiados - WIN")
 	Global.increase_score()
 	
+	# --- CORRECCIÓN CLAVE ---
+	Global.round_failed = false
+	# ------------------------
+	
 	if win_sound: win_sound.play()
-	virus_sprite.visible = false
-	message_label.text = "GANASTE"
-	message_label.visible = true
+	if virus_sprite: virus_sprite.visible = false
+	if message_label:
+		message_label.text = "GANASTE"
+		message_label.visible = true
 
 func lose_game():
 	if game_over: return
 	game_over = true
 	
+	# Ya estaba en true, pero por seguridad:
+	Global.round_failed = true
+	
 	if fail_sound: fail_sound.play()
-	virus_sprite.visible = true
-	message_label.text = "FALLASTE"
-	message_label.visible = true
+	if virus_sprite: virus_sprite.visible = true
+	if message_label:
+		message_label.text = "FALLASTE"
+		message_label.visible = true

@@ -13,12 +13,14 @@ extends Node2D
 
 var active_cars = [] 
 var microgame_active := false
-var player_alive := true # Variable para saber si sobrevivió
+var player_alive := true 
 var cars_spawned: int = 0
 var max_cars: int = 1
 var timer: Timer
 
 func _ready():
+	# En supervivencia NO ponemos round_failed = true al inicio,
+	# porque el jugador "gana" por defecto si no muere.
 	apply_difficulty_settings()
 	start_game()
 
@@ -30,8 +32,7 @@ func start_game():
 	player_alive = true
 	microgame_active = true
 	
-	# Temporizador interno: Si llega a 0 y player_alive es true, GANAS.
-	# Lo ponemos en 4.5s para asegurar que el puntaje se sume antes de que la transición tape todo.
+	# Timer visual opcional (El GameManager corta a los 5s de todas formas)
 	timer = Timer.new()
 	timer.wait_time = 4.5 
 	timer.one_shot = true
@@ -40,7 +41,7 @@ func start_game():
 	timer.start()
 
 	if ani_bomba and ani_bomba.has_method("play"):
-		ani_bomba.play("anibomba")
+		ani_bomba.play("anibomba") # Asegúrate que la animación existe (ej. "AniBomba1")
 
 	car_spawn_timer.wait_time = INTERVALO_CARROS
 	car_spawn_timer.timeout.connect(_spawn_car)
@@ -56,7 +57,6 @@ func _spawn_car():
 	car.scale = Vector2(ESCALA_CARRO, ESCALA_CARRO)
 	
 	var ground = $Ground
-	# Ajuste de seguridad por si no encuentra el suelo
 	var ground_y = 500 
 	if ground: ground_y = ground.global_position.y - 50
 	
@@ -65,7 +65,6 @@ func _spawn_car():
 	add_child(car)
 	active_cars.append(car)
 	
-	# Conectamos la señal de colisión del carro
 	if not car.is_connected("player_hit", _on_car_player_hit):
 		car.player_hit.connect(_on_car_player_hit)
 
@@ -74,11 +73,13 @@ func _on_car_player_hit(_body, _car_instance):
 	
 	printerr("💥 Jugador golpeado - Perdiste esta ronda")
 	player_alive = false
-	# Opcional: Reproducir sonido de muerte o cambiar animación
-	# NO detenemos el juego, dejamos que el GameManager lo cierre
+	
+	# --- CORRECCIÓN CLAVE ---
+	Global.round_failed = true 
+	# ------------------------
 
 func _on_survival_success():
+	# Solo feedback visual, el puntaje se suma si round_failed sigue siendo false al final
 	if player_alive:
-		printerr("✅ Sobreviviste - Punto sumado")
-		Global.increase_score()
-		# Aquí podrías mostrar un texto de "¡BIEN!" o sonido de victoria
+		printerr("✅ Sobreviviste")
+		Global.increase_score() # Sumamos aquí o dejamos que el GameManager decida (tu código actual suma aquí)

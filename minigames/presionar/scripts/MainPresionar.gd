@@ -16,6 +16,11 @@ var juego_activo: bool = false
 var ya_gano: bool = false
 
 func _ready():
+	# --- CORRECCIÓN CLAVE ---
+	# Asumimos fallo hasta que el jugador demuestre lo contrario
+	Global.round_failed = true 
+	# ------------------------
+	
 	apply_difficulty_settings()
 	start_game()
 
@@ -47,7 +52,7 @@ func _process(delta):
 func _input(event):
 	if not juego_activo: return
 		
-	if event.is_action_pressed("ui_accept"): # Espacio o Enter
+	if event.is_action_pressed("ui_accept") or event.is_action_pressed("ui_select"): 
 		comprobar_acierto()
 
 func comprobar_acierto():
@@ -55,18 +60,22 @@ func comprobar_acierto():
 
 	var zona_rect = zona.get_global_rect()
 	var indicador_pos = indicador.global_position
-	var indicador_size = Vector2(50, 50) # Tamaño estimado del indicador
+	var indicador_size = Vector2(50, 50) 
 	var indicador_rect = Rect2(indicador_pos - indicador_size/2, indicador_size)
 
-	juego_activo = false # Detenemos el movimiento
+	juego_activo = false 
 
 	if zona_rect.intersects(indicador_rect):
 		printerr("✅ ACIERTO!")
 		Global.increase_score()
 		ya_gano = true
-		# Visual feedback: Cambiar color a verde, sonido win, etc.
+		
+		# --- CORRECCIÓN CLAVE ---
+		Global.round_failed = false # ¡Salvado!
+		# ------------------------
+		
 		indicador.modulate = Color.GREEN
 	else:
 		printerr("❌ FALLO")
-		# Visual feedback: Color rojo
 		indicador.modulate = Color.RED
+		# Global.round_failed sigue siendo true
