@@ -2,9 +2,9 @@ extends Node2D
 
 # CONFIGURACIÓN DE DIFICULTAD
 @export var VELOCIDAD_BASE: float = 600.0 
-@export var ESCALA_CARRO: float = 0.6      
-@export var FUERZA_SALTO: float = 800.0    
-@export var INTERVALO_CARROS: float = 1.0  
+@export var ESCALA_CARRO: float = 0.8      
+@export var FUERZA_SALTO: float = 1000.0    
+@export var INTERVALO_CARROS: float = 1.3 
 @export var CARROS_POR_NIVEL: int = 1      
 
 @onready var player_node = $Player
@@ -30,7 +30,6 @@ func start_game():
 	player_alive = true
 	microgame_active = true
 	
-	# Timer visual opcional (El GameManager corta a los 5s de todas formas)
 	timer = Timer.new()
 	timer.wait_time = 4.5 
 	timer.one_shot = true
@@ -39,7 +38,7 @@ func start_game():
 	timer.start()
 
 	if ani_bomba and ani_bomba.has_method("play"):
-		ani_bomba.play("anibomba") # Asegúrate que la animación existe (ej. "AniBomba1")
+		ani_bomba.play("anibomba") 
 
 	car_spawn_timer.wait_time = INTERVALO_CARROS
 	car_spawn_timer.timeout.connect(_spawn_car)
@@ -51,11 +50,11 @@ func _spawn_car():
 	var car_scene = preload("res://minigames/saltar/scenes/car.tscn")
 	var car = car_scene.instantiate()
 	
-	car.speed = VELOCIDAD_BASE * (1.0 + Global.score * 0.15) 
+	car.speed = VELOCIDAD_BASE * (0.8 + Global.score * 0.15) 
 	car.scale = Vector2(ESCALA_CARRO, ESCALA_CARRO)
 	
 	var ground = $Ground
-	var ground_y = 500 
+	var ground_y = 600 
 	if ground: ground_y = ground.global_position.y - 50
 	
 	car.global_position = Vector2(1200, ground_y)

@@ -13,7 +13,6 @@ var exploded: bool = false
 var meta_actual: int
 
 func _ready():
-	# --- CORRECCIÓN CLAVE ---
 	Global.round_failed = true
 	# ------------------------
 	apply_difficulty_settings()
@@ -46,12 +45,9 @@ func _input(event):
 
 func _on_win():
 	exploded = true
-	printerr("Virus explotado")
 	Global.increase_score()
 	
-	# --- CORRECCIÓN CLAVE ---
 	Global.round_failed = false
-	# ------------------------
 	
 	if explosion_sound: explosion_sound.play()
 	

@@ -57,9 +57,7 @@ func win_game():
 	
 	Global.increase_score()
 	
-	# --- CORRECCIÓN CLAVE ---
 	Global.round_failed = false
-	# ------------------------
 	
 	if win_sound: win_sound.play()
 	if virus_sprite: virus_sprite.visible = false

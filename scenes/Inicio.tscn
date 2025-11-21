@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://d4akwc0u27dn4"]
+[gd_scene load_steps=16 format=3 uid="uid://d4akwc0u27dn4"]
 
 [ext_resource type="Script" uid="uid://ck6xaqu1316u3" path="res://scripts/inicio.gd" id="1_ur8qn"]
 [ext_resource type="Texture2D" uid="uid://dxgd5k7x42r3n" path="res://assets/assetsgenerales/Sprite-0003.png" id="2_wiq8l"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://fbyn0kve72qv" path="res://assets/assetsgenerales/Start/Sprite-0009.png" id="11_y1mly"]
 [ext_resource type="Texture2D" uid="uid://cctao4j23b1fb" path="res://assets/assetsgenerales/Start/Sprite-0010.png" id="12_2we45"]
 [ext_resource type="Texture2D" uid="uid://cgkxc70oj25c2" path="res://assets/assetsgenerales/Start/Sprite-0011.png" id="13_t0d8n"]
+[ext_resource type="AudioStream" uid="uid://duk30jn5cntj" path="res://assets/assetsgenerales/Game start.mp3" id="14_wiq8l"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_0eaye"]
 animations = [{
@@ -67,3 +68,6 @@ position = Vector2(579, 527)
 sprite_frames = SubResource("SpriteFrames_0eaye")
 animation = &"press_start"
 frame_progress = 0.13147847
+
+[node name="Start" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("14_wiq8l")

@@ -5,16 +5,13 @@ extends Node2D
 
 func _ready():
 	
-	# Configurar el contenedor en el GameManager
 	var game_manager = get_node("/root/GameManager")
 	if game_manager and game_manager.has_method("setup_minigame_container"):
 		game_manager.setup_minigame_container(minigame_container)
 	
-	# Verificar que el contenedor está vacío al inicio
 	if minigame_container.get_child_count() > 0:
 		for child in minigame_container.get_children():
 			child.queue_free()
 	
-	# Iniciar primer minijuego
 	if game_manager and game_manager.has_method("start_first_minigame"):
 		game_manager.start_first_minigame()
