@@ -19,8 +19,6 @@ var max_cars: int = 1
 var timer: Timer
 
 func _ready():
-	# En supervivencia NO ponemos round_failed = true al inicio,
-	# porque el jugador "gana" por defecto si no muere.
 	apply_difficulty_settings()
 	start_game()
 
@@ -71,7 +69,7 @@ func _spawn_car():
 func _on_car_player_hit(_body, _car_instance):
 	if not player_alive: return
 	
-	printerr("💥 Jugador golpeado - Perdiste esta ronda")
+	printerr("Jugador golpeado")
 	player_alive = false
 	
 	# --- CORRECCIÓN CLAVE ---
@@ -79,7 +77,5 @@ func _on_car_player_hit(_body, _car_instance):
 	# ------------------------
 
 func _on_survival_success():
-	# Solo feedback visual, el puntaje se suma si round_failed sigue siendo false al final
 	if player_alive:
-		printerr("✅ Sobreviviste")
-		Global.increase_score() # Sumamos aquí o dejamos que el GameManager decida (tu código actual suma aquí)
+		Global.increase_score() 

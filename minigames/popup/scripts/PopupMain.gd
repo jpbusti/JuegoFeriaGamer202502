@@ -55,7 +55,6 @@ func win_game():
 	if game_over: return
 	game_over = true
 	
-	printerr("✅ Popups limpiados - WIN")
 	Global.increase_score()
 	
 	# --- CORRECCIÓN CLAVE ---
@@ -72,7 +71,6 @@ func lose_game():
 	if game_over: return
 	game_over = true
 	
-	# Ya estaba en true, pero por seguridad:
 	Global.round_failed = true
 	
 	if fail_sound: fail_sound.play()

@@ -1,12 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://d1e5yw3llnfkb"]
+[gd_scene load_steps=6 format=3 uid="uid://d1e5yw3llnfkb"]
 
 [ext_resource type="Script" uid="uid://li57xt0swjem" path="res://minigames/presionar/scripts/MainPresionar.gd" id="1_5tt23"]
 [ext_resource type="Texture2D" uid="uid://qeehuymiadnl" path="res://assets/presionar/fondo_computador8b.png" id="2_vnim5"]
 [ext_resource type="Texture2D" uid="uid://bywn4eonqr88u" path="res://assets/presionar/Sprite-0002.png" id="3_kp0qk"]
 [ext_resource type="Texture2D" uid="uid://7cfwbuoeucqu" path="res://assets/buttonsmasher/Virus.png" id="4_w0hnc"]
 [ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="5_81uy5"]
-[ext_resource type="FontFile" uid="uid://pkt0aclf3ymx" path="res://assets/contraseña/fonts/BoldPixels.ttf" id="6_jm26g"]
-[ext_resource type="Script" uid="uid://bevnmay5etdcr" path="res://minigames/contraseña/scripts/mensaje.gd" id="7_oaowr"]
 
 [node name="MainPresionar" type="Node2D"]
 script = ExtResource("1_5tt23")
@@ -34,13 +32,3 @@ scale = Vector2(0.4296874, 0.39062494)
 texture = ExtResource("4_w0hnc")
 
 [node name="AniBomba" parent="." instance=ExtResource("5_81uy5")]
-
-[node name="Mensaje" type="Label" parent="."]
-offset_left = 155.0
-offset_top = 531.0
-offset_right = 975.0
-offset_bottom = 618.0
-theme_override_fonts/font = ExtResource("6_jm26g")
-theme_override_font_sizes/font_size = 25
-text = "LOS HACKERS ODIAN LAS CONTRASEÑAS SEGURAS. ¡HAZ QUE TE ODIEN!"
-script = ExtResource("7_oaowr")

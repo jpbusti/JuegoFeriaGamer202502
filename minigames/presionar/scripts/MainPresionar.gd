@@ -66,7 +66,7 @@ func comprobar_acierto():
 	juego_activo = false 
 
 	if zona_rect.intersects(indicador_rect):
-		printerr("✅ ACIERTO!")
+		printerr("ACIERTO!")
 		Global.increase_score()
 		ya_gano = true
 		
@@ -76,6 +76,6 @@ func comprobar_acierto():
 		
 		indicador.modulate = Color.GREEN
 	else:
-		printerr("❌ FALLO")
+		printerr("FALLO")
 		indicador.modulate = Color.RED
 		# Global.round_failed sigue siendo true

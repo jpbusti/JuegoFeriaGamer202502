@@ -46,7 +46,7 @@ func _input(event):
 
 func _on_win():
 	exploded = true
-	printerr("✅ Virus explotado - WIN")
+	printerr("Virus explotado")
 	Global.increase_score()
 	
 	# --- CORRECCIÓN CLAVE ---

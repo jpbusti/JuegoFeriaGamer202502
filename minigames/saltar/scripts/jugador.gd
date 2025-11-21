@@ -12,7 +12,6 @@ func _ready():
 	JUMP_FORCE = -800.0
 	GRAVITY = 1500.0
 	
-	printerr("💥 VALORES FORZADOS - Salto: " + str(JUMP_FORCE))
 
 func _physics_process(delta: float) -> void:
 	# Gravedad
@@ -21,6 +20,5 @@ func _physics_process(delta: float) -> void:
 	# Salto con valor garantizado
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_FORCE  # Esto SIEMPRE será -800
-		printerr("🚀 SALTO GARANTIZADO - VelY: " + str(velocity.y))
 	
 	move_and_slide()

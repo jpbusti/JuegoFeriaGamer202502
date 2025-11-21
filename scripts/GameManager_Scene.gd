@@ -44,7 +44,6 @@ func _input(event):
 
 func _on_win():
 	exploded = true
-	printerr("✅ Virus explotado - WIN")
 	Global.increase_score()
 	
 	if explosion_sound: explosion_sound.play()

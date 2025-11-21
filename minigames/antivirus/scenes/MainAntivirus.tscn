@@ -1,0 +1,71 @@
+[gd_scene load_steps=11 format=3 uid="uid://blwif1d88hy82"]
+
+[ext_resource type="Script" uid="uid://b7c6aihg5q273" path="res://minigames/antivirus/scripts/MainAntivirus.gd" id="1_3w0an"]
+[ext_resource type="Texture2D" uid="uid://ddm523dx0234p" path="res://assets/antivirus/arrow.png" id="4_hulku"]
+[ext_resource type="Texture2D" uid="uid://do86k7hc4gl1k" path="res://assets/antivirus/item0.png" id="5_ff7ol"]
+[ext_resource type="Texture2D" uid="uid://b6dash5cyy6gl" path="res://assets/antivirus/unnamed (2).jpg" id="5_hj38v"]
+[ext_resource type="Texture2D" uid="uid://b4rbp6bm88yai" path="res://assets/antivirus/unnamed-removebg-preview.png" id="6_hj38v"]
+[ext_resource type="Texture2D" uid="uid://d3a4xim2ljcjm" path="res://assets/antivirus/item2.png" id="6_klshf"]
+[ext_resource type="Texture2D" uid="uid://ccj4nbx71pgbk" path="res://assets/antivirus/item1.png" id="7_x0npl"]
+[ext_resource type="FontFile" uid="uid://cohegf83vwsfe" path="res://assets/assetsgenerales/Daydream DEMO.otf" id="9_ebjie"]
+[ext_resource type="Texture2D" uid="uid://7cfwbuoeucqu" path="res://assets/buttonsmasher/Virus.png" id="9_hj38v"]
+[ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="10_ebjie"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_3w0an")
+texture_arrow = ExtResource("4_hulku")
+texture_virus = ExtResource("9_hj38v")
+texture_safe_1 = ExtResource("6_klshf")
+texture_safe_2 = ExtResource("6_klshf")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(625.5, 344.25)
+scale = Vector2(1.2216797, 1.2334526)
+texture = ExtResource("5_hj38v")
+
+[node name="Center" type="Sprite2D" parent="."]
+position = Vector2(576, 324)
+scale = Vector2(0.5, 0.465)
+texture = ExtResource("6_hj38v")
+
+[node name="Arrow" type="Sprite2D" parent="Center"]
+position = Vector2(6.0000153, -238.70967)
+scale = Vector2(0.8520833, 0.92645246)
+texture = ExtResource("4_hulku")
+
+[node name="Items" type="Node2D" parent="."]
+position = Vector2(576, 324)
+
+[node name="Item0" type="Sprite2D" parent="Items"]
+position = Vector2(-784, -139.99997)
+scale = Vector2(0.02, 0.021822924)
+texture = ExtResource("5_ff7ol")
+
+[node name="Item1" type="Sprite2D" parent="Items"]
+position = Vector2(-669.99994, 219)
+scale = Vector2(0.23000003, 0.20100005)
+texture = ExtResource("6_klshf")
+
+[node name="Item2" type="Sprite2D" parent="Items"]
+position = Vector2(-644, -39.99994)
+scale = Vector2(0.07441403, 0.059765626)
+texture = ExtResource("7_x0npl")
+
+[node name="Item3" type="Sprite2D" parent="Items"]
+position = Vector2(-625, 69)
+scale = Vector2(0.666827, 0.675048)
+texture = ExtResource("9_hj38v")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="MessageLabel" type="Label" parent="."]
+offset_left = 259.0
+offset_top = 45.0
+offset_right = 650.0
+offset_bottom = 71.0
+theme_override_fonts/font = ExtResource("9_ebjie")
+metadata/_edit_use_anchors_ = true
+
+[node name="AniBomba" parent="." instance=ExtResource("10_ebjie")]
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

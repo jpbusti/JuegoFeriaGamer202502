@@ -25,7 +25,7 @@ func _on_body_entered(body: Node) -> void:
 	if _hit_processed:
 		return
 	if body and body.is_in_group("player"):
-		print("🚗 Carro tocó al jugador:", body.name)
+		print("Carro tocó al jugador:", body.name)
 		_hit_processed = true
 		player_hit.emit(body, self)
 		queue_free()

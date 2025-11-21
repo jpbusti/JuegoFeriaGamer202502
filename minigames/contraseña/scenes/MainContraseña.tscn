@@ -20,6 +20,22 @@ shader_parameter/vignette_intensity = 0.800000038
 [node name="MainContraseña" type="Node2D"]
 script = ExtResource("1_l8jow")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 128
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_0at3r")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+offset_top = 3.0
+offset_right = -3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="GameTimer" type="Timer" parent="."]
 wait_time = 5.0
 one_shot = true
@@ -63,22 +79,6 @@ text = "Elija una contraseña segura "
 
 [node name="Background" type="Sprite2D" parent="."]
 z_index = -10
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 128
-
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
-material = SubResource("ShaderMaterial_0at3r")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -3.0
-offset_top = 3.0
-offset_right = -3.0
-offset_bottom = 3.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
 
 [node name="Mensaje" type="Label" parent="."]
 offset_left = 155.0

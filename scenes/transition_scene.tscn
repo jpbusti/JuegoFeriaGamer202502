@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://xe08tmjviuhg"]
+[gd_scene load_steps=7 format=3 uid="uid://xe08tmjviuhg"]
 
 [ext_resource type="Script" uid="uid://dgo2smbkbxn6a" path="res://scripts/transition_scene.gd" id="1_aigh2"]
+[ext_resource type="AudioStream" uid="uid://d230ypjh3ucmc" path="res://assets/assetsgenerales/switch-sound.mp3" id="2_cqi5c"]
 
-[sub_resource type="Animation" id="Animation_du7xs"]
-length = 0.001
+[sub_resource type="Animation" id="Animation_aigh2"]
+resource_name = "RESET"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -29,87 +30,90 @@ tracks/1/keys = {
 "values": [Vector2(1, 1e-05)]
 }
 
-[sub_resource type="Animation" id="Animation_glms7"]
+[sub_resource type="Animation" id="Animation_cqi5c"]
 resource_name = "curtains_close"
+length = 2.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("TopCurtain:scale")
+tracks/0/path = NodePath("BottomCurtain:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
+"times": PackedFloat32Array(0, 2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(1, 1e-05), Vector2(1, 0.5)]
+"values": [Vector2(1, 1e-05), Vector2(1, 1)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("BottomCurtain:scale")
+tracks/1/path = NodePath("TopCurtain:scale")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.3),
+"times": PackedFloat32Array(0, 2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(1, 1e-05), Vector2(1, 0.5)]
+"values": [Vector2(1, 1e-05), Vector2(1, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_hwd4i"]
+[sub_resource type="Animation" id="Animation_vydtp"]
 resource_name = "curtains_open"
+length = 2.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("TopCurtain:scale")
+tracks/0/path = NodePath("BottomCurtain:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
+"times": PackedFloat32Array(0, 2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(1, 0.5), Vector2(1, 1e-05)]
+"values": [Vector2(1, 1), Vector2(1, 1e-05)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("BottomCurtain:scale")
+tracks/1/path = NodePath("TopCurtain:scale")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.3),
+"times": PackedFloat32Array(0, 2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(1, 0.5), Vector2(1, 1e-05)]
+"values": [Vector2(1, 1), Vector2(1, 1e-05)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_udu3i"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_p2uiw"]
 _data = {
-&"RESET": SubResource("Animation_du7xs"),
-&"curtains_close": SubResource("Animation_glms7"),
-&"curtains_open": SubResource("Animation_hwd4i")
+&"RESET": SubResource("Animation_aigh2"),
+&"curtains_close": SubResource("Animation_cqi5c"),
+&"curtains_open": SubResource("Animation_vydtp")
 }
 
-[node name="TransitionScene" type="Node2D"]
-
-[node name="TransitionLayer" type="CanvasLayer" parent="."]
+[node name="TransitionScene" type="CanvasLayer"]
+layer = 100
 script = ExtResource("1_aigh2")
 
-[node name="TopCurtain" type="ColorRect" parent="TransitionLayer"]
-offset_right = 1152.0
-offset_bottom = 648.0
-scale = Vector2(1, 1e-05)
-
-[node name="BottomCurtain" type="ColorRect" parent="TransitionLayer"]
-custom_minimum_size = Vector2(1152, 648)
+[node name="BottomCurtain" type="ColorRect" parent="."]
 offset_left = 1152.0
 offset_top = 648.0
 offset_right = 2304.0
-offset_bottom = 1296.0
+offset_bottom = 972.0
 rotation = 3.1415927
 scale = Vector2(1, 1e-05)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="TransitionLayer"]
+[node name="TopCurtain" type="ColorRect" parent="."]
+offset_right = 1152.0
+offset_bottom = 324.0
+scale = Vector2(1, 1e-05)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-&"": SubResource("AnimationLibrary_udu3i")
+&"": SubResource("AnimationLibrary_p2uiw")
 }
+
+[node name="SoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_cqi5c")

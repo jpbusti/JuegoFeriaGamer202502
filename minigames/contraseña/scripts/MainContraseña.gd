@@ -36,7 +36,7 @@ func win_game():
 	if game_over: return
 	game_over = true
 	
-	printerr("✅ Contraseña correcta")
+	printerr("Contraseña correcta")
 	Global.increase_score()
 	
 	if win_sound: win_sound.play()
