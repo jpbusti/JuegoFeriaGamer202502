@@ -1,137 +1,94 @@
 extends Node
 
-var minigame_paths = [
+# --- CONFIGURACIÓN ---
+var minigame_paths: Array[String] = [
 	"res://minigames/buttonsmasher/scenes/MainButtonMasher.tscn",
 	"res://minigames/contraseña/scenes/MainContraseña.tscn",
 	"res://minigames/popup/scenes/PopupMain.tscn",
 	"res://minigames/presionar/scenes/MainPresionar.tscn",
 	"res://minigames/saltar/scenes/MainSaltar.tscn"
-
 ]
 
-var current_minigame: Node = null
-var current_minigame_path: String = ""
-var transition_active: bool = false
-var game_active: bool = true
-var minigame_processed: bool = false
+var transition_path: String = "res://scenes/transition_scene.tscn"
+var game_over_scene_path: String = "res://scenes/game_over.tscn" # Ruta a tu escena de Game Over
+
+var current_game_instance: Node = null
+var is_game_active: bool = false
 
 func _ready():
-	randomize()
+	pass
 
-func start_first_minigame():
-	printerr("Iniciando primer minijuego")
-	game_active = true
-	transition_active = false
-	minigame_processed = false
-	load_and_start_minigame()
+func start_game():
+	print("🚀 Iniciando partida...")
+	Global.reset() # Reiniciamos puntos y estado de derrota
+	is_game_active = true
+	game_loop()
 
-func load_and_start_minigame():
-	if not game_active: 
-		return
-	
-	printerr("Cargando nuevo minijuego...")
-	
-	# LIMPIEZA EXTREMA - ELIMINAR TODO
-	cleanup_everything()
-	
-	# Pequeña pausa para asegurar limpieza
-	await get_tree().create_timer(0.2).timeout
-	
-	# ELEGIR MINIJUEGO ALEATORIO
-	var available_paths = minigame_paths.duplicate()
-	
-	# Evitar repetir el mismo minijuego consecutivo
-	if current_minigame_path and available_paths.size() > 1:
-		available_paths.erase(current_minigame_path)
-	
-	var random_index = randi() % available_paths.size()
-	var minigame_path = available_paths[random_index]
-	current_minigame_path = minigame_path
-	
-	printerr("Minijuego seleccionado: " + minigame_path)
-	
-	# Verificar que la ruta existe
-	if not ResourceLoader.exists(minigame_path):
-		printerr("ERROR: La ruta no existe: " + minigame_path)
-		game_over()
-		return
-	
-	# CARGAR NUEVO MINIJUEGO
-	var minigame_scene = load(minigame_path)
-	if minigame_scene and minigame_scene is PackedScene:
-		current_minigame = minigame_scene.instantiate()
-		get_tree().current_scene.add_child(current_minigame)
-		printerr("Minijuego añadido: " + current_minigame.name)
-	else:
-		printerr("Error: No es una escena válida: " + minigame_path)
-		game_over()
+func stop_game():
+	is_game_active = false
+	if current_game_instance:
+		current_game_instance.queue_free()
+		current_game_instance = null
 
-func cleanup_everything():
-	
-	var scene_root = get_tree().current_scene
-	var deleted_count = 0
-	
-	# ELIMINAR TODOS los nodos que no sean esenciales
-	for child in scene_root.get_children():
-		# Mantener solo estos nodos esenciales
-		if child.name in ["Background", "UI", "HUD", "TransitionLayer"]:
-			continue
+func game_loop():
+	while is_game_active:
+		if minigame_paths.is_empty():
+			printerr("❌ ERROR: Lista de juegos vacía")
+			break
 			
-		printerr("ELIMINANDO: " + child.name)
-		child.queue_free()
-		deleted_count += 1
-	
-	# Asegurar que current_minigame se libera
-	if current_minigame and is_instance_valid(current_minigame):
-		printerr("ELIMINANDO: " + current_minigame.name)
-		current_minigame.queue_free()
-		current_minigame = null
-	
-	printerr("Limpieza completada. " + str(deleted_count) + " nodos eliminados.")
+		var random_path = minigame_paths.pick_random()
+		var game_scene = load(random_path)
+		
+		if game_scene:
+			await play_minigame(game_scene)
+		else:
+			await get_tree().create_timer(1.0).timeout
 
-func process_minigame_result(won: bool):
-	if minigame_processed:
-		return
+func play_minigame(game_scene: PackedScene):
+	print("\n🎬 --- NUEVO MINIJUEGO ---")
 	
-	minigame_processed = true
+	# 1. RESETEAR ESTADO DE DERROTA AL INICIO DE LA RONDA
+	Global.round_failed = false 
 	
-	if won:
-		Global.score += 1
-		printerr("Nuevo score: " + str(Global.score))
-		start_transition_to_next()
+	# 2. INSTANCIAR JUEGO
+	current_game_instance = game_scene.instantiate()
+	get_tree().root.add_child(current_game_instance)
+	
+	# 3. JUGAR (5 SEGUNDOS)
+	await get_tree().create_timer(5.0).timeout
+	
+	# 4. TRANSICIÓN (Cerrar cortinas)
+	print("🛑 Tiempo fuera. Cerrando cortinas...")
+	var transition = load(transition_path).instantiate()
+	get_tree().root.add_child(transition) 
+	
+	if transition.has_method("play_close"):
+		await transition.play_close()
 	else:
-		game_over()
+		await get_tree().create_timer(1.0).timeout
 
-func start_transition_to_next():
-	if transition_active: 
-		return
-	transition_active = true
+	# 5. LIMPIEZA (Borrar minijuego anterior)
+	if current_game_instance != null:
+		current_game_instance.queue_free()
+		current_game_instance = null
 	
+	# --- AQUÍ ESTÁ LA SOLUCIÓN DEL GAME OVER ---
+	if Global.round_failed:
+		print("💀 Jugador perdió la ronda. Yendo a Game Over.")
+		is_game_active = false # Rompemos el bucle
+		
+		# Cambiamos a la escena de Game Over (mientras las cortinas siguen cerradas)
+		get_tree().change_scene_to_file(game_over_scene_path)
+		
+		# Abrimos cortinas para revelar la pantalla de Game Over
+		if transition.has_method("play_open"):
+			transition.play_open()
+			get_tree().create_timer(1.5).timeout.connect(transition.queue_free)
+		return # Salimos de la función para no seguir al siguiente juego
 	
-	# Limpiar ANTES de la transición
-	cleanup_everything()
-	
-	# Crear escena de transición
-	var transition_scene = preload("res://scenes/transition_scene.tscn").instantiate()
-	get_tree().current_scene.add_child(transition_scene)
-
-func complete_transition():
-	transition_active = false
-	minigame_processed = false
-	load_and_start_minigame()
-
-func game_over():
-	printerr("Game Over - Score: " + str(Global.score))
-	game_active = false
-	transition_active = false
-	minigame_processed = false
-	
-	# Limpiar antes del game over
-	cleanup_everything()
-	
-	# Guardar puntaje
-	var player_name = "Jugador"
-	if Engine.has_singleton("ScoreManager"):
-		ScoreManager.add_score(player_name, Global.score)
-	
-	get_tree().change_scene_to_file("res://scenes/game_over.tscn")
+	# 6. SI NO PERDIÓ, ABRIR CORTINAS PARA EL SIGUIENTE
+	if transition.has_method("play_open"):
+		transition.play_open()
+		get_tree().create_timer(1.5).timeout.connect(transition.queue_free)
+	else:
+		transition.queue_free()

@@ -1,36 +1,56 @@
 extends Node2D
 
-@onready var transition_layer: CanvasLayer = $TransitionLayer
-@onready var anim: AnimationPlayer = $TransitionLayer/AnimationPlayer
-@onready var top_curtain: ColorRect = $TransitionLayer/TopCurtain
-@onready var bottom_curtain: ColorRect = $TransitionLayer/BottomCurtain
+@export var META_BASE: int = 10
+@export var INCREMENTO_META: int = 2 
+
+@onready var virus = $Virus
+@onready var blaster = $DynamiteBlaster
+@onready var explosion_sound = $ExplosionSound
+@onready var ani_bomba = $AniBomba
+
+var press_count: int = 0
+var exploded: bool = false
+var meta_actual: int
 
 func _ready():
-	print("🎮 GameManager Escena iniciado")
-	
-	# Configurar cortinas inicialmente ABIERTAS
-	setup_curtains()
-	
-	# Configurar el TransitionLayer en el GameManager Autoload
-	var game_manager_autoload = get_node("/root/GameManager")
-	if game_manager_autoload and game_manager_autoload.has_method("setup_transition_layer"):
-		game_manager_autoload.setup_transition_layer(transition_layer, anim)
-		print("✅ TransitionLayer configurado en Autoload")
-	else:
-		print("❌ GameManager Autoload no encontrado")
-	
-	# Iniciar primer minijuego
-	if game_manager_autoload and game_manager_autoload.has_method("start_first_minigame"):
-		game_manager_autoload.start_first_minigame()
+	apply_difficulty_settings()
+	start_game()
 
-func setup_curtains():
-	# Configurar cortinas inicialmente ABIERTAS (fuera de pantalla)
-	var screen_size = get_viewport().get_visible_rect().size
+func apply_difficulty_settings():
+	meta_actual = META_BASE + (Global.score * INCREMENTO_META)
+
+func start_game():
+	press_count = 0
+	exploded = false
+	if virus:
+		virus.visible = true
+		virus.scale = Vector2.ONE
+		
+	if ani_bomba and ani_bomba.has_method("play"):
+		ani_bomba.play("anibomba")
+
+func _input(event):
+	if exploded: return
 	
-	top_curtain.size = Vector2(screen_size.x * 1.1, screen_size.y / 2)
-	top_curtain.position = Vector2(-screen_size.x * 0.05, -screen_size.y / 2)
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		press_count += 1
+		
+		# Feedback visual del click
+		if virus: virus.scale += Vector2(0.05, 0.05)
+		if blaster: blaster.play("press")
+		
+		if press_count >= meta_actual:
+			_on_win()
+
+func _on_win():
+	exploded = true
+	printerr("✅ Virus explotado - WIN")
+	Global.increase_score()
 	
-	bottom_curtain.size = Vector2(screen_size.x * 1.1, screen_size.y / 2)
-	bottom_curtain.position = Vector2(-screen_size.x * 0.05, screen_size.y)
+	if explosion_sound: explosion_sound.play()
 	
-	print("🎬 Cortinas configuradas en posición abierta")
+	# Animación de muerte del virus
+	if virus:
+		var tween = create_tween()
+		tween.tween_property(virus, "scale", virus.scale * 1.5, 0.3)
+		tween.tween_property(virus, "modulate", Color(1, 1, 1, 0), 0.3)
