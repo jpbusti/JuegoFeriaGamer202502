@@ -1,11 +1,11 @@
 extends Node
 
-# --- AUDIO GLOBAL (SFX y MÚSICA) ---
+# --- AUDIO GLOBAL ---
 var sound_stream = preload("res://assets/assetsgenerales/Select.mp3")
-var music_stream = preload("res://assets/assetsgenerales/Menu.mp3") # <--- Tu música aquí
+var music_stream = preload("res://assets/assetsgenerales/Menu.mp3")
 
 var ui_sound_player: AudioStreamPlayer
-var music_player: AudioStreamPlayer # <--- Nuevo reproductor para música
+var music_player: AudioStreamPlayer 
 
 # --- CONFIGURACIÓN DE JUEGOS ---
 var minigame_paths: Array[String] = [
@@ -14,7 +14,8 @@ var minigame_paths: Array[String] = [
 	"res://minigames/popup/scenes/PopupMain.tscn",
 	"res://minigames/presionar/scenes/MainPresionar.tscn",
 	"res://minigames/saltar/scenes/MainSaltar.tscn",
-	"res://minigames/antivirus/scenes/MainAntivirus.tscn"
+	"res://minigames/antivirus/scenes/MainAntivirus.tscn",
+	"res://minigames/terminal/scenes/MainTerminal.tscn"
 ]
 
 var transition_path: String = "res://scenes/transition_scene.tscn"
@@ -25,23 +26,19 @@ var is_game_active: bool = false
 var available_games: Array[String] = [] 
 
 func _ready():
-	# 1. Configurar efectos de sonido
 	ui_sound_player = AudioStreamPlayer.new()
 	ui_sound_player.stream = sound_stream
 	add_child(ui_sound_player)
 	
-	# 2. Configurar música de fondo
 	music_player = AudioStreamPlayer.new()
 	music_player.stream = music_stream
-	music_player.volume_db = -5 # Bajar volumen para que no moleste
+	music_player.volume_db = -5 
 	add_child(music_player)
 
-# Funciones de Audio
 func play_ui_sound():
 	if ui_sound_player: ui_sound_player.play()
 
 func play_music():
-	# Solo reproducir si no está sonando ya
 	if music_player and not music_player.playing:
 		music_player.play()
 
@@ -49,7 +46,6 @@ func stop_music():
 	if music_player:
 		music_player.stop()
 
-# --- LÓGICA DEL JUEGO (Igual que antes) ---
 func start_game():
 	Global.reset() 
 	is_game_active = true

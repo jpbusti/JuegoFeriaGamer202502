@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://ckmk2smigdm4g"]
+[gd_scene load_steps=9 format=3 uid="uid://ckmk2smigdm4g"]
 
 [ext_resource type="Script" uid="uid://hur7gm8bpywp" path="res://minigames/saltar/scripts/MainSaltar.gd" id="1_jjv5x"]
 [ext_resource type="PackedScene" uid="uid://ce6te6cn26so7" path="res://minigames/saltar/scenes/player.tscn" id="2_2iwrr"]
+[ext_resource type="AudioStream" uid="uid://deoonfbexa0if" path="res://assets/saltar/random-race.mp3" id="2_mrnyk"]
 [ext_resource type="PackedScene" uid="uid://cbyqdpufd7bo8" path="res://minigames/saltar/scenes/ui.tscn" id="3_mrnyk"]
 [ext_resource type="Texture2D" uid="uid://o14kfjxi3yvx" path="res://assets/saltar/windows95v2.jpg" id="4_83oyn"]
+[ext_resource type="AudioStream" uid="uid://d2v2u5wvn7i5q" path="res://assets/saltar/Jump.wav" id="4_mrnyk"]
 [ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="5_yb7n7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7mycd"]
@@ -11,8 +13,10 @@ size = Vector2(1147, 76)
 
 [node name="MainSaltar" type="Node2D"]
 script = ExtResource("1_jjv5x")
+audio_bgm = ExtResource("2_mrnyk")
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("2_2iwrr")]
+audio_jump = ExtResource("4_mrnyk")
 
 [node name="Ground" type="StaticBody2D" parent="."]
 position = Vector2(22, 622)

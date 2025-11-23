@@ -15,7 +15,7 @@ func _ready():
 	audio_player.play()
 	
 	# 2. Mostrar puntaje
-	score_label.text = "Puntuación final: " + str(Global.score)
+	score_label.text = "Puntuacion final: " + str(Global.score)
 	
 	name_input.text_submitted.connect(_on_name_submitted)
 	name_input.grab_focus()

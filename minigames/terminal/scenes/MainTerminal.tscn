@@ -1,0 +1,49 @@
+[gd_scene load_steps=3 format=3 uid="uid://wtyk2m1ge01y"]
+
+[ext_resource type="Script" uid="uid://dpdd1fnucj3oj" path="res://minigames/terminal/scripts/main_terminal.gd" id="1_i37y6"]
+[ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="2_v0q7h"]
+
+[node name="MainTerminal" type="Node2D"]
+script = ExtResource("1_i37y6")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -21.0
+offset_top = -12.0
+offset_right = 1152.0
+offset_bottom = 677.0
+color = Color(0, 0, 0, 1)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PromptLabel" type="Label" parent="CanvasLayer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 53.0
+offset_right = 20.0
+offset_bottom = 141.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.40897733, 0.99999994, 0.46346015, 1)
+theme_override_font_sizes/font_size = 64
+
+[node name="TerminalDisplay" type="RichTextLabel" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -100.0
+offset_right = 400.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
+
+[node name="AniBomba" parent="." instance=ExtResource("2_v0q7h")]
+
+[node name="KeySound" type="AudioStreamPlayer2D" parent="."]
+
+[node name="WinSound" type="AudioStreamPlayer2D" parent="."]

@@ -16,10 +16,8 @@ var juego_activo: bool = false
 var ya_gano: bool = false
 
 func _ready():
-	# --- CORRECCIÓN CLAVE ---
-	# Asumimos fallo hasta que el jugador demuestre lo contrario
+	
 	Global.round_failed = true 
-	# ------------------------
 	
 	apply_difficulty_settings()
 	start_game()
@@ -66,16 +64,13 @@ func comprobar_acierto():
 	juego_activo = false 
 
 	if zona_rect.intersects(indicador_rect):
-		printerr("ACIERTO!")
+		printerr("ACIERTO")
 		Global.increase_score()
 		ya_gano = true
 		
-		# --- CORRECCIÓN CLAVE ---
-		Global.round_failed = false # ¡Salvado!
-		# ------------------------
+		Global.round_failed = false 
 		
 		indicador.modulate = Color.GREEN
 	else:
 		printerr("FALLO")
 		indicador.modulate = Color.RED
-		# Global.round_failed sigue siendo true
