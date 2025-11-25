@@ -69,6 +69,7 @@ stream = ExtResource("4_rvhwq")
 stream = ExtResource("5_f63fg")
 
 [node name="Label" type="Label" parent="."]
+visible = false
 offset_left = 64.0
 offset_top = 23.0
 offset_right = 1124.0

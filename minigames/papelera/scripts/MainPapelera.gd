@@ -1,5 +1,7 @@
 extends Node2D
 
+signal start_timer
+
 @onready var virus_container = $VirusContainer
 @onready var trash = $Trash
 @onready var win_sound = $WinSound
@@ -8,6 +10,7 @@ extends Node2D
 @onready var virus_progress_bar = $CanvasLayer/VirusProgressBar
 @onready var time_label = $CanvasLayer/TimeLabel
 @onready var ani_bomba = $AniBomba
+@onready var game_timer = $GameTimer 
 
 var virus_scene = preload("res://minigames/papelera/scenes/virus.tscn")
 var viruses_to_spawn = 0
@@ -19,9 +22,14 @@ var game_active = false
 func _ready():
 	Global.round_failed = true
 	game_finished = false
-	game_active = false
 	
-	# Cálculo de dificultad original
+	# 1. FRENADO
+	game_active = false
+	if game_timer: game_timer.stop()
+	if ani_bomba: 
+		ani_bomba.stop()
+		ani_bomba.frame = 0
+	
 	viruses_to_spawn = 2 + floor(Global.score / 7.0)
 	viruses_remaining = viruses_to_spawn
 	
@@ -32,17 +40,22 @@ func _ready():
 	
 	if bgm_player: bgm_player.play()
 	
-	# Instrucciones
 	if not Global.played_games.has("papelera"):
-		await show_instructions("¡ARRASTRA A LA BASURA!")
+		# [INSTRUCCIONES]
+		await show_instructions("¡BOTA LOS VIRUS!")
 		Global.played_games["papelera"] = true
 	
+	# --- CORRECCIÓN CRÍTICA ---
+	await get_tree().process_frame
+	# --------------------------
+	
+	start_timer.emit()
 	start_game()
 
 func start_game():
 	game_active = true
-	if ani_bomba and ani_bomba.has_method("play"): 
-		ani_bomba.play("anibomba")
+	if ani_bomba: ani_bomba.play()
+	if game_timer: game_timer.start()
 	spawn_viruses()
 
 func spawn_viruses():

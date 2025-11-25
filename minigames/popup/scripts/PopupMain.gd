@@ -1,5 +1,7 @@
 extends Node2D
 
+signal start_timer
+
 const POPUP_SCENES = [
 	preload("res://minigames/popup/scenes/popup_felicidades.tscn"),
 	preload("res://minigames/popup/scenes/popup_descarga.tscn"),
@@ -16,27 +18,34 @@ const PAD_Y = 200
 @onready var fail_sound: AudioStreamPlayer2D = $FailSound
 @onready var virus_sprite: Sprite2D = $VirusSprite
 @onready var ani_bomba = $AniBomba
-@onready var game_timer = $GameTimer # REFERENCIA AL TIMER
+@onready var bgm_player = $BgmPlayer
+@onready var game_timer = $GameTimer 
 
 var popups_restantes: int = 3
 var game_over: bool = false
 var game_active: bool = false
 
 func _ready():
-	# --- FRENADO ---
+	# 1. FRENADO
 	Global.round_failed = true 
 	game_active = false
+	if game_timer: game_timer.stop()
+	if ani_bomba: 
+		ani_bomba.stop()
+		ani_bomba.frame = 0
 	
-	# ¡DETENER CUALQUIER TIMER AUTOMÁTICO!
-	if game_timer: game_timer.stop() 
-	if ani_bomba: ani_bomba.stop()
+	if bgm_player: bgm_player.play()
 	
-	# --- INSTRUCCIONES ---
 	if not Global.played_games.has("popup"):
-		await show_instructions("¡CIERRA LAS VENTANAS!")
+		# [INSTRUCCIONES]
+		await show_instructions("¡CIERRA LAS VENTANAS!") 
 		Global.played_games["popup"] = true
 		
-	# --- ARRANQUE ---
+	# --- CORRECCIÓN CRÍTICA ---
+	await get_tree().process_frame
+	# --------------------------
+	
+	start_timer.emit()
 	start_game()
 
 func start_game():
@@ -44,10 +53,8 @@ func start_game():
 	popups_restantes = 3
 	game_over = false
 	
-	# Iniciar bomba y timers AHORA
-	if ani_bomba and ani_bomba.has_method("play"): ani_bomba.play("anibomba")
+	if ani_bomba: ani_bomba.play()
 	if game_timer: game_timer.start()
-	
 	spawn_popups()
 
 func spawn_popups() -> void:

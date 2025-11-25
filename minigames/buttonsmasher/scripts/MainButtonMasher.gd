@@ -1,5 +1,7 @@
 extends Node2D
 
+signal start_timer
+
 @export var META_BASE: int = 10
 @export var INCREMENTO_META: int = 2 
 
@@ -19,6 +21,11 @@ var bgm_player: AudioStreamPlayer
 var game_active: bool = false 
 
 func _ready():
+	game_active = false
+	if ani_bomba: 
+		ani_bomba.stop()
+		ani_bomba.frame = 0
+	
 	tap_player = AudioStreamPlayer.new()
 	tap_player.max_polyphony = 10
 	if audio_tap: tap_player.stream = audio_tap
@@ -32,13 +39,17 @@ func _ready():
 	add_child(bgm_player)
 	
 	Global.round_failed = true
-	game_active = false
 	
-	# Instrucciones
 	if not Global.played_games.has("masher"):
+		# [INSTRUCCIONES]
 		await show_instructions("¡MACHACA EL CLICK!")
 		Global.played_games["masher"] = true
 		
+	# --- CORRECCIÓN CRÍTICA ---
+	await get_tree().process_frame
+	# --------------------------
+	
+	start_timer.emit()
 	apply_difficulty_settings()
 	start_game()
 
@@ -54,8 +65,7 @@ func start_game():
 		virus.scale = Vector2.ONE
 		virus.modulate = Color.WHITE
 	
-	if ani_bomba and ani_bomba.has_method("play"): 
-		ani_bomba.play("anibomba")
+	if ani_bomba: ani_bomba.play()
 
 func _input(event):
 	if not game_active or exploded: return
@@ -74,7 +84,6 @@ func _input(event):
 
 func _on_win():
 	exploded = true
-	# Música NO para
 	Global.increase_score()
 	Global.round_failed = false
 	if explosion_sound: explosion_sound.play()

@@ -1,8 +1,10 @@
 extends Node2D
 
+signal start_timer
+
 @export var SPAWN_RATE_BASE: float = 0.8
 @export var SPEED_BASE: float = 200
-@export var SPEED_MULTIPLIER: float = 12.0 
+@export var SPEED_MULTIPLIER: float = 8.0 
 
 @export var texture_arrow: Texture2D
 @export var texture_virus: Texture2D
@@ -37,50 +39,48 @@ class IncomingItem:
 	var speed: float
 
 func _ready() -> void:
-	# --- FRENADO DE EMERGENCIA ---
 	game_active = false
-	if ani_bomba: ani_bomba.stop() # Detener bomba si arrancó sola
-	if ani_bomba and ani_bomba.has_method("set_frame"): ani_bomba.set_frame(0) # Resetear visualmente
+	if ani_bomba: 
+		ani_bomba.stop()
+		ani_bomba.frame = 0
 	
 	Global.round_failed = false 
 	if arrow: arrow_original_scale = arrow.scale
 	for child in items_container.get_children(): child.queue_free()
-	message_label.text = "BLOQUEA VIRUS, PERO DEJA PASAR LOS ARCHIVOS"
 	_update_arrow_visuals(true)
 	
-	# 1. MÚSICA (SÍ SUENA)
 	if music_player:
 		if audio_bgm: music_player.stream = audio_bgm
 		music_player.play()
 	
-	# 2. ESPERAR INSTRUCCIONES
 	if not Global.played_games.has("antivirus"):
-		await show_instructions("¡BLOQUEA LOS VIRUS!")
+		# [INSTRUCCIONES]
+		await show_instructions("    BLOQUEA LOS VIRUS\nY DEJA PASAR LOS ARCHIVOS\n      Teclas: ↑ ↓ ← →")		
 		Global.played_games["antivirus"] = true
 	
-	# 3. AHORA SÍ ARRANCA TODO
+	await get_tree().process_frame
+	# -------------------------------------------------------------------
+	
+	start_timer.emit()
 	game_active = true
-	if ani_bomba and ani_bomba.has_method("play"):
-		ani_bomba.play("anibomba")
+	if ani_bomba: ani_bomba.play()
 	_spawn_item()
 
 func _process(delta: float) -> void:
 	if not game_active: return
-	# ... (resto del código igual) ...
+	
 	var current_spawn_rate = max(0.4, SPAWN_RATE_BASE - (Global.score * 0.05))
 	spawn_timer += delta
 	if spawn_timer >= current_spawn_rate:
 		spawn_timer = 0
 		_spawn_item()
+	
 	for i in range(active_items.size() - 1, -1, -1):
 		var item_data = active_items[i]
 		var node = item_data.node
 		node.position = node.position.move_toward(Vector2.ZERO, item_data.speed * delta)
-		if node.position.length() < HIT_RADIUS: _handle_impact(item_data, i)
-
-# ... (Resto de funciones _spawn_item, _input, _update_arrow_visuals, _handle_impact, etc. MANTENER IGUAL) ...
-# Solo asegúrate de copiar las funciones auxiliares del script anterior si no las ves aquí.
-# Para ahorrar espacio, asumo que el resto de la lógica no cambió. Si necesitas todo el bloque, pídemelo.
+		if node.position.length() < HIT_RADIUS:
+			_handle_impact(item_data, i)
 
 func _spawn_item():
 	var item_data = IncomingItem.new()
@@ -91,9 +91,11 @@ func _spawn_item():
 		1: spawn_vector = Vector2.RIGHT 
 		2: spawn_vector = Vector2.DOWN  
 		3: spawn_vector = Vector2.LEFT  
+	
 	item_data.speed = SPEED_BASE + (Global.score * SPEED_MULTIPLIER)
 	var is_virus = randf() > 0.6 
 	item_data.type = "virus" if is_virus else "safe"
+	
 	var sprite = Sprite2D.new()
 	if is_virus:
 		if texture_virus: sprite.texture = texture_virus
@@ -101,6 +103,7 @@ func _spawn_item():
 	else:
 		if texture_safe_1: sprite.texture = texture_safe_1 if randf() > 0.5 else texture_safe_2
 		sprite.scale = Vector2(1.2, 1.2)
+		
 	sprite.position = spawn_vector * DISTANCE_SPAWN
 	items_container.add_child(sprite)
 	item_data.node = sprite

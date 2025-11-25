@@ -1,5 +1,7 @@
 extends Node2D
 
+signal start_timer
+
 @export var SPEED_BASE: float = 500.0
 @export var SPEED_INCREASE: float = 50.0 
 @export var TARGET_WIDTH: float = 150.0  
@@ -23,8 +25,11 @@ var bgm_player: AudioStreamPlayer
 var sfx_player: AudioStreamPlayer
 
 func _ready():
+	game_active = false
+	if ani_bomba: 
+		ani_bomba.stop()
+		ani_bomba.frame = 0
 	Global.round_failed = true
-	game_active = false # Pausa
 	
 	center_x = 1152.0 / 2.0
 	limit_left = 50.0
@@ -36,21 +41,24 @@ func _ready():
 		bgm_player.volume_db = -5
 		bgm_player.autoplay = true
 	add_child(bgm_player)
-	
 	sfx_player = AudioStreamPlayer.new()
 	add_child(sfx_player)
 	
-	# Instrucciones
 	if not Global.played_games.has("presionar"):
-		await show_instructions("¡ATINA AL VERDE!")
+		# [INSTRUCCIONES]
+		await show_instructions("¡ATINA AL VERDE CON\n      ESPACIO!")
 		Global.played_games["presionar"] = true
 		
+	# --- CORRECCIÓN CRÍTICA ---
+	await get_tree().process_frame
+	# --------------------------
+	
+	start_timer.emit()
 	start_game()
 
 func start_game():
 	game_active = true
-	if ani_bomba and ani_bomba.has_method("play"): 
-		ani_bomba.play("anibomba")
+	if ani_bomba: ani_bomba.play()
 	
 	current_speed = SPEED_BASE + (Global.score * SPEED_INCREASE)
 	
@@ -76,7 +84,6 @@ func _input(event):
 
 func check_win():
 	game_active = false
-	# La música NO para
 	var distance = abs(needle.position.x - center_x)
 	var tolerance = TARGET_WIDTH / 2.0 
 	if distance <= tolerance: _win()

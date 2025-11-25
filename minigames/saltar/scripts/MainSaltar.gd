@@ -1,5 +1,7 @@
 extends Node2D
 
+signal start_timer
+
 @export var VELOCIDAD_BASE: float = 600.0 
 @export var ESCALA_CARRO: float = 0.6      
 @export var FUERZA_SALTO: float = 800.0    
@@ -19,7 +21,13 @@ var max_cars: int = 1
 var music_player: AudioStreamPlayer
 
 func _ready():
+	# 1. FRENADO
 	microgame_active = false
+	if car_spawn_timer: car_spawn_timer.stop()
+	if ani_bomba: 
+		ani_bomba.stop()
+		ani_bomba.frame = 0
+	
 	if audio_bgm:
 		music_player = AudioStreamPlayer.new()
 		music_player.stream = audio_bgm
@@ -29,11 +37,16 @@ func _ready():
 	
 	apply_difficulty_settings()
 	
-	# Instrucciones
 	if not Global.played_games.has("saltar"):
-		await show_instructions("¡SALTA EL ERROR!")
+		# [INSTRUCCIONES]
+		await show_instructions("¡SALTA CON ESPACIO!") 
 		Global.played_games["saltar"] = true
 	
+	# --- CORRECCIÓN CRÍTICA ---
+	await get_tree().process_frame
+	# --------------------------
+	
+	start_timer.emit()
 	start_game()
 
 func apply_difficulty_settings():
@@ -44,9 +57,7 @@ func start_game():
 	player_alive = true
 	microgame_active = true
 	
-	if ani_bomba and ani_bomba.has_method("play"): 
-		ani_bomba.play("anibomba")
-	
+	if ani_bomba: ani_bomba.play()
 	car_spawn_timer.wait_time = INTERVALO_CARROS
 	car_spawn_timer.timeout.connect(_spawn_car)
 	car_spawn_timer.start()
@@ -70,7 +81,6 @@ func _on_car_player_hit(_body, _car_instance):
 	if not player_alive: return
 	player_alive = false
 	Global.round_failed = true 
-	# Música NO para aquí tampoco (opcional, pero mejor para consistencia)
 
 func _on_survival_success():
 	if player_alive: Global.increase_score()

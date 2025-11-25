@@ -1,11 +1,13 @@
 extends Node
 
+# Sonidos precargados
 var sound_stream = preload("res://assets/assetsgenerales/Select.mp3")
 var music_stream = preload("res://assets/assetsgenerales/Menu.mp3")
 
 var ui_sound_player: AudioStreamPlayer
 var music_player: AudioStreamPlayer 
 
+# Lista de minijuegos
 var minigame_paths: Array[String] = [
 	"res://minigames/buttonsmasher/scenes/MainButtonMasher.tscn",
 	"res://minigames/contraseña/scenes/MainContraseña.tscn",
@@ -17,6 +19,7 @@ var minigame_paths: Array[String] = [
 	"res://minigames/papelera/scenes/MainPapelera.tscn"
 ]
 
+# Rutas de escenas de gestión
 var transition_path: String = "res://scenes/transition_scene.tscn"
 var game_over_scene_path: String = "res://scenes/game_over.tscn" 
 var last_played_path: String = "" 
@@ -25,6 +28,7 @@ var is_game_active: bool = false
 var available_games: Array[String] = [] 
 
 func _ready():
+	# Configuración de audio global
 	ui_sound_player = AudioStreamPlayer.new()
 	ui_sound_player.stream = sound_stream
 	add_child(ui_sound_player)
@@ -47,7 +51,11 @@ func stop_music():
 
 func start_game():
 	Global.reset() 
-	Global.played_games = {}
+	
+	# --- CORRECCIÓN 1: Reiniciar historial de instrucciones al empezar nueva partida ---
+	Global.played_games = {} 
+	# ---------------------------------------------------------------------------------
+	
 	is_game_active = true
 	available_games = minigame_paths.duplicate()
 	game_loop()
@@ -66,7 +74,12 @@ func game_loop():
 			available_games = minigame_paths.duplicate()
 		
 		var random_path = available_games.pick_random()
+		# Evitar repetir el mismo juego dos veces seguidas si es posible
+		if available_games.size() > 1 and random_path == last_played_path:
+			continue
+			
 		available_games.erase(random_path)
+		last_played_path = random_path
 		
 		var game_scene = load(random_path)
 		if game_scene:
@@ -75,12 +88,30 @@ func game_loop():
 			await get_tree().create_timer(1.0).timeout
 
 func play_minigame(game_scene: PackedScene):
+	# Por seguridad, reseteamos el estado de fallo (aunque cada minijuego lo gestiona)
 	Global.round_failed = false 
+
+	# 1. Instanciar el juego
 	current_game_instance = game_scene.instantiate()
 	get_tree().root.add_child(current_game_instance)
 	
-	await get_tree().create_timer(5.0).timeout
+	# --- CORRECCIÓN 2: ESPERAR A LAS INSTRUCCIONES ---
+	# Si el minijuego tiene la señal "start_timer", esperamos a que termine de mostrar
+	# el texto antes de iniciar el cronómetro de 5 segundos.
+	if current_game_instance.has_signal("start_timer"):
+		print("Esperando instrucciones...")
+		await current_game_instance.start_timer
+	# -------------------------------------------------
 	
+	# 2. Iniciar Temporizador del Nivel
+	# Si es un Jefe dura más, si no, son 5 segundos estándar
+	var game_duration = 5.0
+	if "Boss" in current_game_instance.name:
+		game_duration = 60.0
+	
+	await get_tree().create_timer(game_duration).timeout
+	
+	# 3. Transición
 	var transition = load(transition_path).instantiate()
 	get_tree().root.add_child(transition) 
 	
@@ -89,10 +120,12 @@ func play_minigame(game_scene: PackedScene):
 	else:
 		await get_tree().create_timer(1.0).timeout
 
+	# 4. Limpieza
 	if current_game_instance != null:
 		current_game_instance.queue_free()
 		current_game_instance = null
 	
+	# 5. Verificar Victoria/Derrota
 	if Global.round_failed:
 		is_game_active = false 
 		get_tree().change_scene_to_file(game_over_scene_path)

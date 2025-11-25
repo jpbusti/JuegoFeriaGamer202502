@@ -1,40 +1,57 @@
 extends Node2D
 
+signal start_timer
+
 @onready var message_label: Label = $MessageLabel
 @onready var win_sound: AudioStreamPlayer2D = $WinSound
 @onready var lose_sound: AudioStreamPlayer2D = $LoseSound
 @onready var ani_bomba = $AniBomba
+@onready var bgm_player = $BgmPlayer
+@onready var game_timer = $GameTimer
 
 var game_over = false
 var game_active = false
 
 var secure_db = [
 	"M@ta@Rata2.32", "XyZ_987-Lmn", "!dadSAwd23421", "3#99??¡?//dafac",
-	"M1GatoSeLlamaGuante", "Kanqu1_2025", "Seguridad_Total!",
-	"C0mpl3j4$Texto", "H4ck3r_Pr0_99", "341247QesiQ@3#"
+	"M1GatoSeLlamaGuante", "Kanqu1_2025", "N1E319IddhT/aN",
+	"14Q@dgSGTYQ_#19f", "H4ck3r_Pr0_99", "341247QesiQ@3#"
 ]
 
 var insecure_db = [
 	"123456", "password", "admin", "12345", "querty", "hola123", 
 	"dragon", "baseball", "princess", "iloveyou", "master", "shadow",
-	"superman", "111111", "teamo", "usuario", "clave", "abcde"
+	"superman", "111111", "teamo", "usuario", "clave", "abcde",
+	"futbol", "mama", "papa", "google", "facebook", "contraseña"
 ]
 
 func _ready():
+	# 1. FRENADO
 	Global.round_failed = true
 	game_active = false
+	if game_timer: game_timer.stop()
+	if ani_bomba: 
+		ani_bomba.stop()
+		ani_bomba.frame = 0
 	
-	# Instrucciones
+	if bgm_player: bgm_player.play()
+	
 	if not Global.played_games.has("contrasena"):
-		await show_instructions("¡ELIGE LA SEGURA!")
+		# [INSTRUCCIONES]
+		await show_instructions("¡ELIGE LA CONTRASEÑA SEGURA!") 
 		Global.played_games["contrasena"] = true
 		
+	# --- CORRECCIÓN CRÍTICA ---
+	await get_tree().process_frame
+	# --------------------------
+	
+	start_timer.emit()
 	start_game()
 
 func start_game():
 	game_active = true
-	if ani_bomba and ani_bomba.has_method("play"): 
-		ani_bomba.play("anibomba")
+	if ani_bomba: ani_bomba.play()
+	if game_timer: game_timer.start()
 	spawn_options()
 
 func spawn_options():
