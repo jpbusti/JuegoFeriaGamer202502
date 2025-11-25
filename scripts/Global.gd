@@ -1,11 +1,12 @@
 extends Node
 
-var score: int = 0
+signal score_updated(new_score) 
+var score = 0
 var difficulty: float = 1.0
 var played_games = {}
 var round_failed: bool = false 
-
 var last_terminal_data = {} 
+
 var cyber_dictionary = [
 	{"word": "VPN", "def": "Red privada que cifra tu conexión para navegar de forma segura y anónima."},
 	{"word": "TOR", "def": "Navegador que rebota tu conexión por varios nodos para ocultar tu identidad."},
@@ -55,10 +56,13 @@ func reset():
 	score = 0
 	difficulty = 1
 	round_failed = false
-	last_terminal_data = {} 
+	last_terminal_data = {}
+	played_games = {}
+	score_updated.emit(0) 
 
 func increase_score():
 	score += 1
 	if score % 3 == 0:
 		difficulty += 0.5
+	score_updated.emit(score)
 		

@@ -1,13 +1,11 @@
 extends Node
 
-# Sonidos precargados
 var sound_stream = preload("res://assets/assetsgenerales/Select.mp3")
 var music_stream = preload("res://assets/assetsgenerales/Menu.mp3")
 
 var ui_sound_player: AudioStreamPlayer
 var music_player: AudioStreamPlayer 
 
-# Lista de minijuegos
 var minigame_paths: Array[String] = [
 	"res://minigames/buttonsmasher/scenes/MainButtonMasher.tscn",
 	"res://minigames/contraseña/scenes/MainContraseña.tscn",
@@ -19,7 +17,6 @@ var minigame_paths: Array[String] = [
 	"res://minigames/papelera/scenes/MainPapelera.tscn"
 ]
 
-# Rutas de escenas de gestión
 var transition_path: String = "res://scenes/transition_scene.tscn"
 var game_over_scene_path: String = "res://scenes/game_over.tscn" 
 var last_played_path: String = "" 
@@ -27,8 +24,10 @@ var current_game_instance: Node = null
 var is_game_active: bool = false
 var available_games: Array[String] = [] 
 
+var hud_scene = preload("res://scenes/UI/SecurityHUD.tscn") 
+var current_hud_instance: Node = null
+
 func _ready():
-	# Configuración de audio global
 	ui_sound_player = AudioStreamPlayer.new()
 	ui_sound_player.stream = sound_stream
 	add_child(ui_sound_player)
@@ -54,6 +53,10 @@ func start_game():
 	
 	Global.played_games = {} 
 	
+	if current_hud_instance: current_hud_instance.queue_free() 
+	current_hud_instance = hud_scene.instantiate()
+	get_tree().root.add_child(current_hud_instance) 
+		
 	is_game_active = true
 	available_games = minigame_paths.duplicate()
 	game_loop()
@@ -63,6 +66,9 @@ func stop_game():
 	if current_game_instance:
 		current_game_instance.queue_free()
 		current_game_instance = null
+	if current_hud_instance:
+		current_hud_instance.queue_free()
+		current_hud_instance = null
 
 func game_loop():
 	while is_game_active:
@@ -90,20 +96,16 @@ func play_minigame(game_scene: PackedScene):
 	current_game_instance = game_scene.instantiate()
 	get_tree().root.add_child(current_game_instance)
 	
-
 	if current_game_instance.has_signal("start_timer"):
 		print("Esperando instrucciones...")
 		await current_game_instance.start_timer
-	# -------------------------------------------------
 	
-
 	var game_duration = 5.0
 	if "Boss" in current_game_instance.name:
 		game_duration = 60.0
 	
 	await get_tree().create_timer(game_duration).timeout
 	
-	# 3. Transición
 	var transition = load(transition_path).instantiate()
 	get_tree().root.add_child(transition) 
 	
@@ -118,6 +120,11 @@ func play_minigame(game_scene: PackedScene):
 	
 	if Global.round_failed:
 		is_game_active = false 
+		
+		if current_hud_instance:
+			current_hud_instance.queue_free()
+			current_hud_instance = null
+		
 		get_tree().change_scene_to_file(game_over_scene_path)
 		
 		if transition.has_method("play_open"):

@@ -28,12 +28,14 @@ color = Color(0.9226416, 0.75018907, 0.84492844, 1)
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="TimeLabel" type="Label" parent="CanvasLayer"]
+visible = false
 offset_right = 40.0
 offset_bottom = 23.0
 theme_override_fonts/font = ExtResource("3_xloye")
 theme_override_font_sizes/font_size = 22
 
 [node name="VirusProgressBar" type="ProgressBar" parent="CanvasLayer"]
+visible = false
 offset_left = 956.0
 offset_top = 2.0
 offset_right = 1152.0
@@ -58,6 +60,7 @@ autoplay = true
 parameters/looping = true
 
 [node name="Label" type="Label" parent="."]
+visible = false
 offset_left = 967.0
 offset_top = 27.0
 offset_right = 1176.0

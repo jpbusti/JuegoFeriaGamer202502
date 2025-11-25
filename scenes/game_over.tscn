@@ -1,67 +1,58 @@
-[gd_scene load_steps=5 format=3 uid="uid://g7kkncna1d0p"]
+[gd_scene load_steps=4 format=3 uid="uid://g7kkncna1d0p"]
 
 [ext_resource type="Script" uid="uid://k6cm5a1wbg2h" path="res://scripts/game_over.gd" id="1_xeevv"]
 [ext_resource type="Texture2D" uid="uid://bs4clicw48cw1" path="res://assets/assetsgenerales/menu.png" id="2_tbwuq"]
-[ext_resource type="FontFile" uid="uid://cohegf83vwsfe" path="res://assets/assetsgenerales/Daydream DEMO.otf" id="2_wqhvx"]
 [ext_resource type="FontFile" uid="uid://dk1gt4ulc1v35" path="res://assets/assetsgenerales/PressStart2P-Regular.ttf" id="4_racf3"]
 
-[node name="GameOver" type="Node2D"]
-position = Vector2(576, 324)
+[node name="GameOver" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_xeevv")
 
 [node name="Menu" type="Sprite2D" parent="."]
+position = Vector2(576, 324)
 texture = ExtResource("2_tbwuq")
 
-[node name="FinalScoreLabel" type="Label" parent="."]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -120.0
-offset_top = -172.0
-offset_right = 117.5
-offset_bottom = -110.5
-grow_horizontal = 2
-theme_override_fonts/font = ExtResource("2_wqhvx")
-
-[node name="Label" type="Label" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -71.5
-offset_right = 200.0
-offset_bottom = 71.5
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("2_wqhvx")
+theme_override_colors/font_color = Color(0.8, 0.1764706, 0.1254902, 1)
+theme_override_fonts/font = ExtResource("4_racf3")
 theme_override_font_sizes/font_size = 43
-text = "Game Over
-"
+text = "SYSTE FAILURE"
 
-[node name="NameInput" type="LineEdit" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -144.0
-offset_top = 60.0
-offset_right = 139.0
-offset_bottom = 94.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_fonts/font = ExtResource("2_wqhvx")
-placeholder_text = "Escribe tu nombre"
+[node name="FinalScoreLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_racf3")
+horizontal_alignment = 1
 
-[node name="InfoLabel" type="Label" parent="."]
-offset_left = -400.0
-offset_top = 124.0
-offset_right = -360.0
-offset_bottom = 155.0
+[node name="InfoLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(700, 0)
+layout_mode = 2
 theme_override_colors/font_color = Color(3.706068e-06, 0.6165452, 0.19092435, 1)
 theme_override_fonts/font = ExtResource("4_racf3")
 theme_override_font_sizes/font_size = 22
-autowrap_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="NameInput" type="LineEdit" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_racf3")
+placeholder_text = "Escribe tu nombre"
+alignment = 1

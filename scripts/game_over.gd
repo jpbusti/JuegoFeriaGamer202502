@@ -1,13 +1,20 @@
-extends Node2D
+extends Control
 
-@onready var score_label: Label = $FinalScoreLabel
-@onready var name_input: LineEdit = $NameInput
-@onready var info_label = $InfoLabel 
+# Rutas ajustadas a la estructura de contenedores
+@onready var title_label: Label = $CenterContainer/VBoxContainer/TitleLabel
+@onready var score_label: Label = $CenterContainer/VBoxContainer/FinalScoreLabel
+@onready var info_label: Label = $CenterContainer/VBoxContainer/InfoLabel
+@onready var name_input: LineEdit = $CenterContainer/VBoxContainer/NameInput
 
+# Recursos
 var game_over_sound = preload("res://assets/assetsgenerales/Game over.mp3")
 var audio_player: AudioStreamPlayer
 
+# Fuentes (Opcional: Cárgalas aquí si quieres forzarlas por código)
+# var mi_fuente = preload("res://ruta/a/tu/fuente.ttf")
+
 func _ready():
+	# 1. Audio
 	audio_player = AudioStreamPlayer.new()
 	audio_player.stream = game_over_sound
 	add_child(audio_player)
@@ -16,33 +23,26 @@ func _ready():
 	score_label.text = "Puntuacion final: " + str(Global.score)
 	
 	if info_label:
-		info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART 
-		info_label.custom_minimum_size.x = 800 
-		info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER 
-		var data_to_show = {}
-		
+		var data = {}
 		if "last_terminal_data" in Global and not Global.last_terminal_data.is_empty():
-			data_to_show = Global.last_terminal_data
-		
+			data = Global.last_terminal_data
 		elif "cyber_dictionary" in Global and not Global.cyber_dictionary.is_empty():
-			data_to_show = Global.cyber_dictionary.pick_random()
-		
-		if not data_to_show.is_empty():
-			info_label.text = "DATO: " + str(data_to_show["word"]) + "\n\n" + str(data_to_show["def"])
-			info_label.modulate = Color(0.5, 1, 0.5)
+			data = Global.cyber_dictionary.pick_random()
+			
+		if not data.is_empty():
+			# Usamos BBCode o texto plano con saltos de línea
+			info_label.text = "--- DATO CIBERNETICO ---\n\n" + str(data["word"]) + ":\n" + str(data["def"])
+			info_label.modulate = Color(0.5, 1, 0.5) # Verde claro
 		else:
-			info_label.text = "¡Inténtalo de nuevo!"
-	
+			info_label.text = "¡Sigue intentándolo!"
+
+	# 4. Input
 	name_input.text_submitted.connect(_on_name_submitted)
 	name_input.grab_focus()
 
 func _on_name_submitted(new_text: String):
-	if new_text.strip_edges() == "":
-		return 
-	
+	if new_text.strip_edges() == "": return 
 	ScoreManager.add_score(new_text, Global.score)
-	print("Guardando score para: ", new_text)
-	
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func _input(event):

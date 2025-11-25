@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://ckwoa1sdhmumd"]
+
+[ext_resource type="Script" uid="uid://ca0pmerh6m68k" path="res://scripts/SecurityHud.gd" id="1_ld5ax"]
+[ext_resource type="FontFile" uid="uid://dk1gt4ulc1v35" path="res://assets/assetsgenerales/PressStart2P-Regular.ttf" id="2_t5nxj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iaywk"]
+bg_color = Color(0.20020312, 0.5917986, 0.8063895, 1)
+
+[node name="SecurityHud" type="CanvasLayer"]
+layer = 90
+script = ExtResource("1_ld5ax")
+
+[node name="SecurityBar" type="ProgressBar" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 50.0
+offset_top = 20.0
+offset_right = -50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_iaywk")
+max_value = 25.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -145.0
+offset_top = 4.0
+offset_right = 143.0
+offset_bottom = 53.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_t5nxj")
+text = "NIVEL DE SEGURIDAD
+"
