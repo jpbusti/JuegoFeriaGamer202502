@@ -1,13 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://d1e5yw3llnfkb"]
+[gd_scene load_steps=8 format=3 uid="uid://d1e5yw3llnfkb"]
 
 [ext_resource type="Script" uid="uid://li57xt0swjem" path="res://minigames/presionar/scripts/MainPresionar.gd" id="1_5tt23"]
+[ext_resource type="AudioStream" uid="uid://cuu3w1hpo4avx" path="res://assets/presionar/neon_drive_-_retro_synth_game_music.ogg" id="2_5tt23"]
 [ext_resource type="Texture2D" uid="uid://qeehuymiadnl" path="res://assets/presionar/fondo_computador8b.png" id="2_vnim5"]
 [ext_resource type="Texture2D" uid="uid://bywn4eonqr88u" path="res://assets/presionar/Sprite-0002.png" id="3_kp0qk"]
+[ext_resource type="AudioStream" uid="uid://c7akslcdhecih" path="res://assets/contraseña/audio/Correct.ogg" id="3_vnim5"]
 [ext_resource type="Texture2D" uid="uid://7cfwbuoeucqu" path="res://assets/buttonsmasher/Virus.png" id="4_w0hnc"]
 [ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="5_81uy5"]
 
 [node name="MainPresionar" type="Node2D"]
 script = ExtResource("1_5tt23")
+audio_bgm = ExtResource("2_5tt23")
+audio_success = ExtResource("3_vnim5")
 
 [node name="FondoComputador" type="Sprite2D" parent="."]
 position = Vector2(578, 324.5)
@@ -26,7 +30,7 @@ offset_right = 609.0
 offset_bottom = 354.0
 color = Color(0, 1, 0, 0.6666667)
 
-[node name="Indicador" type="Sprite2D" parent="."]
+[node name="Needle" type="Sprite2D" parent="."]
 position = Vector2(570, 324)
 scale = Vector2(0.4296874, 0.39062494)
 texture = ExtResource("4_w0hnc")

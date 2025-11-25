@@ -1,13 +1,11 @@
 extends Node
 
-# --- AUDIO GLOBAL ---
 var sound_stream = preload("res://assets/assetsgenerales/Select.mp3")
 var music_stream = preload("res://assets/assetsgenerales/Menu.mp3")
 
 var ui_sound_player: AudioStreamPlayer
 var music_player: AudioStreamPlayer 
 
-# --- CONFIGURACIÓN DE JUEGOS ---
 var minigame_paths: Array[String] = [
 	"res://minigames/buttonsmasher/scenes/MainButtonMasher.tscn",
 	"res://minigames/contraseña/scenes/MainContraseña.tscn",
@@ -15,7 +13,8 @@ var minigame_paths: Array[String] = [
 	"res://minigames/presionar/scenes/MainPresionar.tscn",
 	"res://minigames/saltar/scenes/MainSaltar.tscn",
 	"res://minigames/antivirus/scenes/MainAntivirus.tscn",
-	"res://minigames/terminal/scenes/MainTerminal.tscn"
+	"res://minigames/terminal/scenes/MainTerminal.tscn",
+	"res://minigames/papelera/scenes/MainPapelera.tscn"
 ]
 
 var transition_path: String = "res://scenes/transition_scene.tscn"
@@ -48,6 +47,7 @@ func stop_music():
 
 func start_game():
 	Global.reset() 
+	Global.played_games = {}
 	is_game_active = true
 	available_games = minigame_paths.duplicate()
 	game_loop()

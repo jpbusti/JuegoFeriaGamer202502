@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://b5smk64pl858c"]
+
+[ext_resource type="Script" path="res://minigames/papelera/scripts/trash.gd" id="1_exrr5"]
+[ext_resource type="Texture2D" uid="uid://cjsrdvymqgq41" path="res://assets/papelera/trash.png" id="2_exrr5"]
+[ext_resource type="AudioStream" uid="uid://ef5n36f60chg" path="res://assets/papelera/sounds/paper-bin-toss-1-83125.mp3" id="3_2cq4d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w6jqc"]
+size = Vector2(251, 215)
+
+[node name="Trash" type="Area2D"]
+position = Vector2(136, 193)
+script = ExtResource("1_exrr5")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(14, 52.312492)
+scale = Vector2(1.058594, 0.8840332)
+texture = ExtResource("2_exrr5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2.750183, 1.6875153)
+shape = SubResource("RectangleShape2D_w6jqc")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 2.750183
+offset_top = 0.68751526
+offset_right = 42.750183
+offset_bottom = 23.687515
+metadata/_edit_use_anchors_ = true
+
+[node name="RecycleSound" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(14, 52.3125)
+scale = Vector2(1.058594, 0.8840332)
+stream = ExtResource("3_2cq4d")

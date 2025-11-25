@@ -1,76 +1,105 @@
 extends Node2D
 
-@export var VELOCIDAD_BASE: float = 1000
-@export var RANGO_ZONA: float = 100.0 
-@export var INCREMENTO_DIFICULTAD: float = 0.1 
+@export var SPEED_BASE: float = 500.0
+@export var SPEED_INCREASE: float = 50.0 
+@export var TARGET_WIDTH: float = 150.0  
 
-@onready var zona = $ZonaObjetivo
-@onready var indicador = $Indicador
+@export var audio_bgm: AudioStream
+@export var audio_success: AudioStream
+@export var audio_fail: AudioStream
+
+@onready var needle = $Needle           
+@onready var target_zone = $TargetZone  
 @onready var ani_bomba = $AniBomba
 
-var direccion: int = 1
-var velocidad_actual: float
-var limite_izquierdo: float = 100
-var limite_derecho: float = 1000
-var juego_activo: bool = false
-var ya_gano: bool = false
+var direction: int = 1
+var current_speed: float = 0.0 
+var game_active: bool = false
+var center_x: float = 0.0
+var limit_left: float = 0.0
+var limit_right: float = 0.0
+
+var bgm_player: AudioStreamPlayer
+var sfx_player: AudioStreamPlayer
 
 func _ready():
+	Global.round_failed = true
+	game_active = false # Pausa
 	
-	Global.round_failed = true 
+	center_x = 1152.0 / 2.0
+	limit_left = 50.0
+	limit_right = 1152.0 - 50.0
 	
-	apply_difficulty_settings()
+	bgm_player = AudioStreamPlayer.new()
+	if audio_bgm:
+		bgm_player.stream = audio_bgm
+		bgm_player.volume_db = -5
+		bgm_player.autoplay = true
+	add_child(bgm_player)
+	
+	sfx_player = AudioStreamPlayer.new()
+	add_child(sfx_player)
+	
+	# Instrucciones
+	if not Global.played_games.has("presionar"):
+		await show_instructions("¡ATINA AL VERDE!")
+		Global.played_games["presionar"] = true
+		
 	start_game()
 
-func apply_difficulty_settings():
-	var nivel_dificultad = 1 + (Global.score * INCREMENTO_DIFICULTAD)
-	velocidad_actual = VELOCIDAD_BASE * nivel_dificultad
-	if zona:
-		zona.scale = Vector2(1.0 / nivel_dificultad, 1.0)
-
 func start_game():
-	juego_activo = true
-	ya_gano = false
-	if indicador: indicador.position.x = 200
-	
-	if ani_bomba and ani_bomba.has_method("play"):
+	game_active = true
+	if ani_bomba and ani_bomba.has_method("play"): 
 		ani_bomba.play("anibomba")
+	
+	current_speed = SPEED_BASE + (Global.score * SPEED_INCREASE)
+	
+	if target_zone:
+		target_zone.position.x = center_x
+		if target_zone is ColorRect:
+			target_zone.size.x = TARGET_WIDTH
+			target_zone.position.x = center_x - (TARGET_WIDTH / 2.0)
+		elif target_zone is Sprite2D:
+			var texture_width = target_zone.texture.get_width()
+			target_zone.scale.x = TARGET_WIDTH / texture_width
 
 func _process(delta):
-	if not juego_activo: return
-
-	indicador.position.x += direccion * velocidad_actual * delta
-	if indicador.position.x > limite_derecho:
-		indicador.position.x = limite_derecho
-		direccion = -1
-	elif indicador.position.x < limite_izquierdo:
-		indicador.position.x = limite_izquierdo
-		direccion = 1
+	if not game_active: return
+	needle.position.x += current_speed * direction * delta
+	if needle.position.x >= limit_right: direction = -1
+	elif needle.position.x <= limit_left: direction = 1
 
 func _input(event):
-	if not juego_activo: return
-		
-	if event.is_action_pressed("ui_accept") or event.is_action_pressed("ui_select"): 
-		comprobar_acierto()
+	if not game_active: return
+	if event.is_action_pressed("ui_accept") or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
+		check_win()
 
-func comprobar_acierto():
-	if not zona or not indicador: return
+func check_win():
+	game_active = false
+	# La música NO para
+	var distance = abs(needle.position.x - center_x)
+	var tolerance = TARGET_WIDTH / 2.0 
+	if distance <= tolerance: _win()
+	else: _lose()
 
-	var zona_rect = zona.get_global_rect()
-	var indicador_pos = indicador.global_position
-	var indicador_size = Vector2(50, 50) 
-	var indicador_rect = Rect2(indicador_pos - indicador_size/2, indicador_size)
+func _win():
+	print("¡PERFECTO!")
+	Global.round_failed = false
+	Global.increase_score()
+	if audio_success: sfx_player.stream = audio_success; sfx_player.play()
+	needle.modulate = Color.GREEN
+	var t = create_tween()
+	t.tween_property(needle, "scale", Vector2(1.2, 1.2), 0.1)
+	t.tween_property(needle, "scale", Vector2(1.0, 1.0), 0.1)
 
-	juego_activo = false 
+func _lose():
+	print("FALLASTE")
+	Global.round_failed = true
+	if audio_fail: sfx_player.stream = audio_fail; sfx_player.play()
+	needle.modulate = Color.RED
 
-	if zona_rect.intersects(indicador_rect):
-		printerr("ACIERTO")
-		Global.increase_score()
-		ya_gano = true
-		
-		Global.round_failed = false 
-		
-		indicador.modulate = Color.GREEN
-	else:
-		printerr("FALLO")
-		indicador.modulate = Color.RED
+func show_instructions(text_to_show: String):
+	var instruction_scene = preload("res://scenes/UI/InstructionLabel.tscn")
+	var instance = instruction_scene.instantiate()
+	add_child(instance)
+	await instance.show_message(text_to_show)

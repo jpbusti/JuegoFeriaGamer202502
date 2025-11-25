@@ -1,0 +1,66 @@
+[gd_scene load_steps=13 format=3 uid="uid://jbwp6j2fa8ok"]
+
+[ext_resource type="Script" path="res://minigames/papelera/scripts/virus.gd" id="1_8wh0f"]
+[ext_resource type="Texture2D" uid="uid://dw7rx7k5ksb5w" path="res://assets/papelera/Blue1.png" id="2_jns7i"]
+[ext_resource type="Texture2D" uid="uid://dsjhqj4rlg0oj" path="res://assets/papelera/Blue2.png" id="3_fivvr"]
+[ext_resource type="Texture2D" uid="uid://bhbns7wivni8g" path="res://assets/papelera/Blue3.png" id="4_d0ty1"]
+[ext_resource type="Texture2D" uid="uid://bebrn6m5jqqh6" path="res://assets/papelera/Blue4.png" id="5_cgoo7"]
+[ext_resource type="Texture2D" uid="uid://bn16ppnqxw501" path="res://assets/papelera/Blue5.png" id="6_5rojn"]
+[ext_resource type="Texture2D" uid="uid://b8opq02lalfn7" path="res://assets/papelera/Blue6.png" id="7_fer1i"]
+[ext_resource type="Texture2D" uid="uid://bpn86rt2nmuiw" path="res://assets/papelera/Blue7.png" id="8_jmlmw"]
+[ext_resource type="Texture2D" uid="uid://bblfm3p5i1cyb" path="res://assets/papelera/Blue8.png" id="9_dk1ho"]
+[ext_resource type="AudioStream" uid="uid://xxwarj2dyj1e" path="res://assets/papelera/sounds/monster-death-grunt-131480.mp3" id="10_fivvr"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_m83q2"]
+radius = 80.23092
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6lfty"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_jns7i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_fivvr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_d0ty1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_cgoo7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_5rojn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_fer1i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_jmlmw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_dk1ho")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 7.0
+}]
+
+[node name="Virus" type="Area2D"]
+script = ExtResource("1_8wh0f")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(23, 108)
+shape = SubResource("CircleShape2D_m83q2")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(23, 110.00001)
+scale = Vector2(6.6169357, 6.4516125)
+sprite_frames = SubResource("SpriteFrames_6lfty")
+animation = &"idle"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../CollisionShape2D")
+
+[node name="ScreamSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("10_fivvr")

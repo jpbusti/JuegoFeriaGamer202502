@@ -1,0 +1,69 @@
+[gd_scene load_steps=11 format=3 uid="uid://dlggyl6dq1nod"]
+
+[ext_resource type="Script" uid="uid://bexqvo4vpemn1" path="res://minigames/papelera/scripts/MainPapelera.gd" id="1_d5vb6"]
+[ext_resource type="PackedScene" uid="uid://b5smk64pl858c" path="res://minigames/papelera/scenes/trash.tscn" id="2_3a4lk"]
+[ext_resource type="FontFile" uid="uid://bxv6xiu0hjr4l" path="res://assets/papelera/Fonts/determination.ttf" id="3_xloye"]
+[ext_resource type="AudioStream" uid="uid://co4h3agqh3pff" path="res://assets/papelera/sounds/you-win-sequence-1-183948.mp3" id="4_jysvg"]
+[ext_resource type="AudioStream" uid="uid://d0q5a6dmwc60g" path="res://assets/papelera/sounds/failure-1-89170.mp3" id="5_4uchj"]
+[ext_resource type="AudioStream" uid="uid://bgjv4m4fxljp" path="res://assets/papelera/sounds/night-city-53936.mp3" id="6_0rsd0"]
+[ext_resource type="FontFile" uid="uid://deb8j5nsw0q3e" path="res://assets/papelera/Fonts/mac's Minecraft.otf" id="7_2jvv6"]
+[ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="8_3a4lk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ngmwe"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6px6"]
+bg_color = Color(0.36862746, 0.85490197, 0.41960785, 1)
+
+[node name="VirusCleanupGame" type="Node2D"]
+script = ExtResource("1_d5vb6")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 1155.0
+offset_bottom = 657.0
+mouse_filter = 2
+color = Color(0.9226416, 0.75018907, 0.84492844, 1)
+
+[node name="Trash" parent="." instance=ExtResource("2_3a4lk")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TimeLabel" type="Label" parent="CanvasLayer"]
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_fonts/font = ExtResource("3_xloye")
+theme_override_font_sizes/font_size = 22
+
+[node name="VirusProgressBar" type="ProgressBar" parent="CanvasLayer"]
+offset_left = 956.0
+offset_top = 2.0
+offset_right = 1152.0
+offset_bottom = 29.0
+theme_override_styles/background = SubResource("StyleBoxFlat_ngmwe")
+theme_override_styles/fill = SubResource("StyleBoxFlat_y6px6")
+value = 100.0
+show_percentage = false
+
+[node name="VirusContainer" type="Node2D" parent="."]
+
+[node name="WinSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_jysvg")
+
+[node name="LoseSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_4uchj")
+
+[node name="BgmPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_0rsd0")
+volume_db = 3.0
+autoplay = true
+parameters/looping = true
+
+[node name="Label" type="Label" parent="."]
+offset_left = 967.0
+offset_top = 27.0
+offset_right = 1176.0
+offset_bottom = 57.0
+theme_override_fonts/font = ExtResource("7_2jvv6")
+theme_override_font_sizes/font_size = 23
+text = "Security Bar"
+
+[node name="AniBomba" parent="." instance=ExtResource("8_3a4lk")]

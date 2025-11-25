@@ -1,14 +1,16 @@
-[gd_scene load_steps=11 format=3 uid="uid://blwif1d88hy82"]
+[gd_scene load_steps=13 format=3 uid="uid://blwif1d88hy82"]
 
 [ext_resource type="Script" uid="uid://b7c6aihg5q273" path="res://minigames/antivirus/scripts/MainAntivirus.gd" id="1_3w0an"]
 [ext_resource type="Texture2D" uid="uid://bowvcwbv3t0o3" path="res://assets/antivirus/SYS32.png" id="4_3w0an"]
 [ext_resource type="Texture2D" uid="uid://ddm523dx0234p" path="res://assets/antivirus/arrow.png" id="4_hulku"]
-[ext_resource type="Texture2D" uid="uid://b6dash5cyy6gl" path="res://assets/antivirus/unnamed (2).jpg" id="5_hj38v"]
+[ext_resource type="AudioStream" uid="uid://cv0eykw17kesb" path="res://assets/antivirus/Cyberpunk Moonlight Sonata v2.mp3" id="5_ff7ol"]
 [ext_resource type="AudioStream" uid="uid://dc1ang3ubbs7h" path="res://assets/antivirus/Hit4.wav" id="6_ebjie"]
 [ext_resource type="Texture2D" uid="uid://b4rbp6bm88yai" path="res://assets/antivirus/unnamed-removebg-preview.png" id="6_hj38v"]
+[ext_resource type="Texture2D" uid="uid://bali3dgaomhji" path="res://assets/antivirus/screenshot.png" id="7_ebjie"]
 [ext_resource type="FontFile" uid="uid://cohegf83vwsfe" path="res://assets/assetsgenerales/Daydream DEMO.otf" id="9_ebjie"]
 [ext_resource type="Texture2D" uid="uid://7cfwbuoeucqu" path="res://assets/buttonsmasher/Virus.png" id="9_hj38v"]
 [ext_resource type="AudioStream" uid="uid://dx266545rhauc" path="res://assets/antivirus/techno_loop_pico8.wav" id="9_hulku"]
+[ext_resource type="Texture2D" uid="uid://beoq4maf7xo4d" path="res://assets/antivirus/pngimg.com - red_arrow_PNG20.png" id="9_klshf"]
 [ext_resource type="PackedScene" uid="uid://cmp2cvj5x3ur8" path="res://scenes/AniBomba.tscn" id="10_ebjie"]
 
 [node name="Main" type="Node2D"]
@@ -17,14 +19,14 @@ texture_arrow = ExtResource("4_hulku")
 texture_virus = ExtResource("9_hj38v")
 texture_safe_1 = ExtResource("4_3w0an")
 texture_safe_2 = ExtResource("4_3w0an")
-audio_bgm = ExtResource("9_hulku")
+audio_bgm = ExtResource("5_ff7ol")
 audio_virus_block = ExtResource("6_ebjie")
 audio_safe_pass = ExtResource("6_ebjie")
 
 [node name="Background" type="Sprite2D" parent="."]
-position = Vector2(625.5, 344.25)
-scale = Vector2(1.2216797, 1.2334526)
-texture = ExtResource("5_hj38v")
+position = Vector2(595, 325)
+scale = Vector2(0.45390227, 0.45827633)
+texture = ExtResource("7_ebjie")
 
 [node name="Center" type="Sprite2D" parent="."]
 position = Vector2(576, 324)
@@ -32,9 +34,9 @@ scale = Vector2(0.5, 0.465)
 texture = ExtResource("6_hj38v")
 
 [node name="Arrow" type="Sprite2D" parent="Center"]
-position = Vector2(6.0000153, -238.70967)
-scale = Vector2(0.8520833, 0.92645246)
-texture = ExtResource("4_hulku")
+position = Vector2(5.9999657, -195.69893)
+scale = Vector2(0.10022788, 0.056261204)
+texture = ExtResource("9_klshf")
 
 [node name="Items" type="Node2D" parent="."]
 position = Vector2(576, 324)
