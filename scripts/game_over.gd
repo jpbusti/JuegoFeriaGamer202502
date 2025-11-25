@@ -1,20 +1,17 @@
 extends Control
 
-# Rutas ajustadas a la estructura de contenedores
 @onready var title_label: Label = $CenterContainer/VBoxContainer/TitleLabel
 @onready var score_label: Label = $CenterContainer/VBoxContainer/FinalScoreLabel
 @onready var info_label: Label = $CenterContainer/VBoxContainer/InfoLabel
 @onready var name_input: LineEdit = $CenterContainer/VBoxContainer/NameInput
 
-# Recursos
+
 var game_over_sound = preload("res://assets/assetsgenerales/Game over.mp3")
 var audio_player: AudioStreamPlayer
 
-# Fuentes (Opcional: Cárgalas aquí si quieres forzarlas por código)
-# var mi_fuente = preload("res://ruta/a/tu/fuente.ttf")
+
 
 func _ready():
-	# 1. Audio
 	audio_player = AudioStreamPlayer.new()
 	audio_player.stream = game_over_sound
 	add_child(audio_player)

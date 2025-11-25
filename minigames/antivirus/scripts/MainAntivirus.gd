@@ -4,13 +4,15 @@ signal start_timer
 
 @export var SPAWN_RATE_BASE: float = 0.8
 @export var SPEED_BASE: float = 200
-@export var SPEED_MULTIPLIER: float = 8.0 
+@export var SPEED_MULTIPLIER: float = 12.0 
 
+# --- TEXTURAS ---
 @export var texture_arrow: Texture2D
 @export var texture_virus: Texture2D
 @export var texture_safe_1: Texture2D
 @export var texture_safe_2: Texture2D
 
+# --- AUDIO ---
 @export var audio_bgm: AudioStream        
 @export var audio_virus_block: AudioStream 
 @export var audio_safe_pass: AudioStream   
@@ -29,6 +31,7 @@ var arrow_original_scale: Vector2
 @onready var items_container = $Items
 @onready var message_label = $MessageLabel
 @onready var ani_bomba = $AniBomba
+
 @onready var music_player = $MusicPlayer
 @onready var sfx_player = $SFXPlayer
 
@@ -49,6 +52,7 @@ func _ready() -> void:
 	for child in items_container.get_children(): child.queue_free()
 	_update_arrow_visuals(true)
 	
+	
 	if music_player:
 		if audio_bgm: music_player.stream = audio_bgm
 		music_player.play()
@@ -60,6 +64,9 @@ func _ready() -> void:
 	await get_tree().process_frame
 	
 	start_timer.emit()
+	
+	get_tree().create_timer(4.5).timeout.connect(_on_survival_success)
+	
 	game_active = true
 	if ani_bomba: ani_bomba.play()
 	_spawn_item()
@@ -125,7 +132,6 @@ func _handle_impact(item: IncomingItem, index: int):
 	if item.type == "virus":
 		if current_direction == item.direction:
 			_on_virus_blocked(item.node) 
-			Global.increase_score()
 		else: _game_over("¡INFECTADO! DEBES BLOQUEAR LOS VIRUS") 
 	else:
 		if current_direction == item.direction: _game_over("¡ERROR! BLOQUEASTE UN ARCHIVO SEGURO")
@@ -148,6 +154,11 @@ func _on_safe_passed(node: Node2D):
 	var t = create_tween()
 	t.tween_property(node, "scale", Vector2.ZERO, 0.1)
 	t.tween_callback(node.queue_free)
+
+func _on_survival_success():
+	if game_active and not Global.round_failed:
+		Global.increase_score()
+# -----------------------------------------------------
 
 func _game_over(reason: String):
 	game_active = false

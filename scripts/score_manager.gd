@@ -3,7 +3,7 @@ extends Node
 var scores: Array = [] 
 var score_linked_list: ScoreList = ScoreList.new()
 
-const SAVE_PATH := "user://scores.csv"
+const SAVE_PATH := "res://scores.csv"
 func _ready():
 	load_scores()
 

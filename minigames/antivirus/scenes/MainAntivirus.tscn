@@ -44,6 +44,7 @@ position = Vector2(576, 324)
 [node name="Timer" type="Timer" parent="."]
 
 [node name="MessageLabel" type="Label" parent="."]
+visible = false
 offset_left = 259.0
 offset_top = 45.0
 offset_right = 650.0

@@ -14,9 +14,9 @@ func update_bar(new_score):
 	var t = create_tween()
 	t.tween_property(progress_bar, "value", new_score, 0.5).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	
-	if new_score >= 20:
+	if new_score >= 12:
 		progress_bar.modulate = Color(0, 1, 0) 
-	elif new_score >= 10:
+	elif new_score >= 6:
 		progress_bar.modulate = Color(1, 1, 0) 
 	else:
 		progress_bar.modulate = Color(1, 1, 1) 

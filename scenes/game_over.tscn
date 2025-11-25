@@ -35,7 +35,7 @@ size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.8, 0.1764706, 0.1254902, 1)
 theme_override_fonts/font = ExtResource("4_racf3")
 theme_override_font_sizes/font_size = 43
-text = "SYSTE FAILURE"
+text = "SYSTEM FAILURE"
 
 [node name="FinalScoreLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
