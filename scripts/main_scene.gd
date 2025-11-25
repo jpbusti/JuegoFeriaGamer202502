@@ -1,4 +1,3 @@
-# main_scene.gd
 extends Node2D
 
 @onready var minigame_container = $MinijuegoContainer

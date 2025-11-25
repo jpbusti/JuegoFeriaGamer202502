@@ -21,7 +21,7 @@ func show_message(text: String, duration: float = 1.5):
 	
 	var t_out = create_tween()
 	t_out.set_parallel(true)
-	t_out.tween_property(label, "scale", Vector2(2, 0), 0.2).set_ease(Tween.EASE_IN) # Se aplasta
+	t_out.tween_property(label, "scale", Vector2(2, 0), 0.2).set_ease(Tween.EASE_IN) 
 	t_out.tween_property(self, "modulate:a", 0, 0.2)
 	
 	await t_out.finished

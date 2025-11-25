@@ -21,7 +21,6 @@ var max_cars: int = 1
 var music_player: AudioStreamPlayer
 
 func _ready():
-	# 1. FRENADO
 	microgame_active = false
 	if car_spawn_timer: car_spawn_timer.stop()
 	if ani_bomba: 
@@ -38,13 +37,10 @@ func _ready():
 	apply_difficulty_settings()
 	
 	if not Global.played_games.has("saltar"):
-		# [INSTRUCCIONES]
 		await show_instructions("¡SALTA CON ESPACIO!") 
 		Global.played_games["saltar"] = true
 	
-	# --- CORRECCIÓN CRÍTICA ---
 	await get_tree().process_frame
-	# --------------------------
 	
 	start_timer.emit()
 	start_game()

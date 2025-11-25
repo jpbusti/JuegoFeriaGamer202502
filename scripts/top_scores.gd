@@ -10,11 +10,9 @@ func _ready() -> void:
 	back_button.pressed.connect(_on_back_pressed)
 
 func load_scores():
-	# limpiar hijos anteriores
 	for child in score_list.get_children():
 		child.queue_free()
 
-	# obtener puntajes desde ScoreManager
 	var scores = ScoreManager.scores
 
 	if scores.is_empty():

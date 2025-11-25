@@ -5,7 +5,6 @@ func _ready():
 	set_process_input(true)
 
 func _input(event):
-	# Detecta clic izquierdo sobre el sprite (si tiene CollisionShape2D y Pickable activo)
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if not is_playing():
 			play("press")

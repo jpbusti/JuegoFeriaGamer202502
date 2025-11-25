@@ -16,9 +16,9 @@ func _ready():
 	score_label.text = "Puntuacion final: " + str(Global.score)
 	
 	if info_label:
-		info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART # Activar salto de línea
-		info_label.custom_minimum_size.x = 800 # Ancho máximo en pixeles (ajusta según tu diseño)
-		info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER # Centrar texto
+		info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART 
+		info_label.custom_minimum_size.x = 800 
+		info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER 
 		var data_to_show = {}
 		
 		if "last_terminal_data" in Global and not Global.last_terminal_data.is_empty():

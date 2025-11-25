@@ -1,4 +1,3 @@
-# password_option.gd - MANTENER EL ORIGINAL QUE FUNCIONABA
 extends Area2D
 
 signal chose_correct

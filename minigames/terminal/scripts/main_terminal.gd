@@ -35,15 +35,13 @@ func _ready():
 		bgm_player.autoplay = true
 	add_child(bgm_player)
 	
-	# INSTRUCCIONES
 	if not Global.played_games.has("terminal"):
 		await show_instructions("¡TECLEA EL CÓDIGO!")
 		Global.played_games["terminal"] = true
 	
-	# SINCRONIZACIÓN
 	await get_tree().process_frame
 	
-	# ARRANQUE
+	
 	start_timer.emit()
 	start_game()
 
@@ -62,8 +60,7 @@ func _process(delta):
 		_update_display()
 
 func _pick_word_smartly():
-	# 1. Filtrar palabras según dificultad (Longitud)
-	# Nivel 0 (fácil): 3-4 letras. Nivel Máx: > 10 letras.
+
 	var min_len = 3 + floor(Global.score / 5.0)
 	var max_len = 5 + floor(Global.score / 3.0)
 	
@@ -73,17 +70,13 @@ func _pick_word_smartly():
 		if w_len >= min_len and w_len <= max_len:
 			candidates.append(item)
 	
-	# Si no hay candidatos (nivel muy alto), coger cualquiera de las difíciles
 	if candidates.is_empty():
 		candidates = Global.cyber_dictionary.filter(func(x): return x["word"].length() > 8)
 	
-	# 2. Elegir una y guardarla en Global
 	var selected_data = candidates.pick_random()
 	target_word = selected_data["word"]
 	
-	# --- AQUÍ ESTÁ LA MAGIA PARA EL GAME OVER ---
 	Global.last_terminal_data = selected_data
-	# --------------------------------------------
 
 func _input(event):
 	if game_over or not game_active: return
@@ -91,7 +84,6 @@ func _input(event):
 		var key_unicode = event.unicode
 		if key_unicode > 0:
 			var character = char(key_unicode).to_upper()
-			# Aceptamos letras, números y guion bajo
 			if (character >= "A" and character <= "Z") or (character >= "0" and character <= "9") or character == "_":
 				_process_character(character)
 

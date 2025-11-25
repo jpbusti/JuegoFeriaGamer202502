@@ -23,7 +23,6 @@ func _ready():
 	Global.round_failed = true
 	game_finished = false
 	
-	# 1. FRENADO
 	game_active = false
 	if game_timer: game_timer.stop()
 	if ani_bomba: 
@@ -41,13 +40,10 @@ func _ready():
 	if bgm_player: bgm_player.play()
 	
 	if not Global.played_games.has("papelera"):
-		# [INSTRUCCIONES]
 		await show_instructions("¡BOTA LOS VIRUS!")
 		Global.played_games["papelera"] = true
 	
-	# --- CORRECCIÓN CRÍTICA ---
 	await get_tree().process_frame
-	# --------------------------
 	
 	start_timer.emit()
 	start_game()

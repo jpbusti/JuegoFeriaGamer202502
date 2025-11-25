@@ -3,7 +3,7 @@ extends CanvasLayer
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var top_curtain: ColorRect = $TopCurtain
 @onready var bottom_curtain: ColorRect = $BottomCurtain
-@onready var sound_player: AudioStreamPlayer = $SoundPlayer # <-- Nuevo nodo
+@onready var sound_player: AudioStreamPlayer = $SoundPlayer
 
 var transition_speed: float = 4
 

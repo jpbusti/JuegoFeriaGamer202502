@@ -52,9 +52,7 @@ func stop_music():
 func start_game():
 	Global.reset() 
 	
-	# --- CORRECCIÓN 1: Reiniciar historial de instrucciones al empezar nueva partida ---
 	Global.played_games = {} 
-	# ---------------------------------------------------------------------------------
 	
 	is_game_active = true
 	available_games = minigame_paths.duplicate()
@@ -74,7 +72,6 @@ func game_loop():
 			available_games = minigame_paths.duplicate()
 		
 		var random_path = available_games.pick_random()
-		# Evitar repetir el mismo juego dos veces seguidas si es posible
 		if available_games.size() > 1 and random_path == last_played_path:
 			continue
 			
@@ -88,23 +85,18 @@ func game_loop():
 			await get_tree().create_timer(1.0).timeout
 
 func play_minigame(game_scene: PackedScene):
-	# Por seguridad, reseteamos el estado de fallo (aunque cada minijuego lo gestiona)
 	Global.round_failed = false 
 
-	# 1. Instanciar el juego
 	current_game_instance = game_scene.instantiate()
 	get_tree().root.add_child(current_game_instance)
 	
-	# --- CORRECCIÓN 2: ESPERAR A LAS INSTRUCCIONES ---
-	# Si el minijuego tiene la señal "start_timer", esperamos a que termine de mostrar
-	# el texto antes de iniciar el cronómetro de 5 segundos.
+
 	if current_game_instance.has_signal("start_timer"):
 		print("Esperando instrucciones...")
 		await current_game_instance.start_timer
 	# -------------------------------------------------
 	
-	# 2. Iniciar Temporizador del Nivel
-	# Si es un Jefe dura más, si no, son 5 segundos estándar
+
 	var game_duration = 5.0
 	if "Boss" in current_game_instance.name:
 		game_duration = 60.0
@@ -120,12 +112,10 @@ func play_minigame(game_scene: PackedScene):
 	else:
 		await get_tree().create_timer(1.0).timeout
 
-	# 4. Limpieza
 	if current_game_instance != null:
 		current_game_instance.queue_free()
 		current_game_instance = null
 	
-	# 5. Verificar Victoria/Derrota
 	if Global.round_failed:
 		is_game_active = false 
 		get_tree().change_scene_to_file(game_over_scene_path)

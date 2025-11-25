@@ -26,7 +26,6 @@ var game_over: bool = false
 var game_active: bool = false
 
 func _ready():
-	# 1. FRENADO
 	Global.round_failed = true 
 	game_active = false
 	if game_timer: game_timer.stop()
@@ -37,13 +36,10 @@ func _ready():
 	if bgm_player: bgm_player.play()
 	
 	if not Global.played_games.has("popup"):
-		# [INSTRUCCIONES]
 		await show_instructions("¡CIERRA LAS VENTANAS!") 
 		Global.played_games["popup"] = true
 		
-	# --- CORRECCIÓN CRÍTICA ---
 	await get_tree().process_frame
-	# --------------------------
 	
 	start_timer.emit()
 	start_game()

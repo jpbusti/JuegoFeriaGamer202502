@@ -54,12 +54,10 @@ func _ready() -> void:
 		music_player.play()
 	
 	if not Global.played_games.has("antivirus"):
-		# [INSTRUCCIONES]
 		await show_instructions("    BLOQUEA LOS VIRUS\nY DEJA PASAR LOS ARCHIVOS\n      Teclas: ↑ ↓ ← →")		
 		Global.played_games["antivirus"] = true
 	
 	await get_tree().process_frame
-	# -------------------------------------------------------------------
 	
 	start_timer.emit()
 	game_active = true

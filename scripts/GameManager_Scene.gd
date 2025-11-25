@@ -35,7 +35,6 @@ func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		press_count += 1
 		
-		# Feedback visual del click
 		if virus: virus.scale += Vector2(0.05, 0.05)
 		if blaster: blaster.play("press")
 		
@@ -48,7 +47,6 @@ func _on_win():
 	
 	if explosion_sound: explosion_sound.play()
 	
-	# Animación de muerte del virus
 	if virus:
 		var tween = create_tween()
 		tween.tween_property(virus, "scale", virus.scale * 1.5, 0.3)

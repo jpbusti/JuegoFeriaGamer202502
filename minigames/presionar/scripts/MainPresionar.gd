@@ -45,13 +45,10 @@ func _ready():
 	add_child(sfx_player)
 	
 	if not Global.played_games.has("presionar"):
-		# [INSTRUCCIONES]
 		await show_instructions("¡ATINA AL VERDE CON\n      ESPACIO!")
 		Global.played_games["presionar"] = true
 		
-	# --- CORRECCIÓN CRÍTICA ---
 	await get_tree().process_frame
-	# --------------------------
 	
 	start_timer.emit()
 	start_game()

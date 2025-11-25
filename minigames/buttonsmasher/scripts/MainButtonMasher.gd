@@ -41,13 +41,10 @@ func _ready():
 	Global.round_failed = true
 	
 	if not Global.played_games.has("masher"):
-		# [INSTRUCCIONES]
 		await show_instructions("¡MACHACA EL CLICK!")
 		Global.played_games["masher"] = true
 		
-	# --- CORRECCIÓN CRÍTICA ---
 	await get_tree().process_frame
-	# --------------------------
 	
 	start_timer.emit()
 	apply_difficulty_settings()
