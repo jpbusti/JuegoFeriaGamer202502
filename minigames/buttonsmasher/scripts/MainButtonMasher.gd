@@ -44,8 +44,7 @@ func _ready():
 		await show_instructions("¡MACHACA EL CLICK!")
 		Global.played_games["masher"] = true
 		
-	await get_tree().process_frame
-	
+	await get_tree().process_frame	
 	start_timer.emit()
 	apply_difficulty_settings()
 	start_game()
