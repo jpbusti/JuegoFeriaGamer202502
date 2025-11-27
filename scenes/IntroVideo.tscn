@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b0f2dgd47esxc"]
+[gd_scene load_steps=3 format=3 uid="uid://b0f2dgd47esxc"]
 
 [ext_resource type="Script" uid="uid://blefamhhurdjg" path="res://scripts/IntroVideo.gd" id="1_yro6x"]
+[ext_resource type="VideoStream" uid="uid://8y4ycfst3u6t" path="res://intro3.ogv" id="2_f3j0u"]
 
 [node name="IntroVideo" type="Control"]
 layout_mode = 3
@@ -10,6 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_yro6x")
+video_file = ExtResource("2_f3j0u")
 
 [node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
 layout_mode = 0

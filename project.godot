@@ -8,10 +8,14 @@
 
 config_version=5
 
+[accessibility]
+
+general/updates_per_second=100
+
 [application]
 
 config/name="JUEGO FERIA GAMER"
-run/main_scene="uid://d4akwc0u27dn4"
+run/main_scene="uid://b0f2dgd47esxc"
 config/features=PackedStringArray("4.5", "Forward Plus")
 
 [autoload]
@@ -19,6 +23,12 @@ config/features=PackedStringArray("4.5", "Forward Plus")
 Global="*res://scripts/Global.gd"
 ScoreManager="*res://scripts/score_manager.gd"
 GameManager="*res://scripts/GameManager.gd"
+
+[display]
+
+window/size/mode=4
+window/size/maximize_disabled=true
+window/stretch/mode="canvas_items"
 
 [rendering]
 

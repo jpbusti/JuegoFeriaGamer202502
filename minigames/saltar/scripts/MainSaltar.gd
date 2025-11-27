@@ -46,7 +46,7 @@ func _ready():
 	start_game()
 
 func apply_difficulty_settings():
-	var nivel_dificultad = 1 + (Global.score / 2) 
+	var nivel_dificultad = 1 + (Global.score / 3) 
 	max_cars = CARROS_POR_NIVEL * nivel_dificultad
 
 func start_game():

@@ -20,6 +20,12 @@ shader_parameter/vignette_intensity = 0.800000038
 [node name="MainContraseña" type="Node2D"]
 script = ExtResource("1_l8jow")
 
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1148.0
+offset_bottom = 646.0
+mouse_filter = 2
+color = Color(0.75542253, 0.00045858978, 0.7592963, 1)
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 128
 
@@ -46,10 +52,10 @@ wait_time = 2.0
 one_shot = true
 
 [node name="MessageLabel" type="Label" parent="."]
-offset_left = 71.0
-offset_top = 105.0
-offset_right = 111.0
-offset_bottom = 235.0
+offset_left = 303.0
+offset_top = 107.0
+offset_right = 343.0
+offset_bottom = 237.0
 theme_override_fonts/font = ExtResource("2_bfvn4")
 theme_override_font_sizes/font_size = 50
 horizontal_alignment = 1
@@ -83,9 +89,9 @@ z_index = -10
 
 [node name="Mensaje" type="Label" parent="."]
 offset_left = 155.0
-offset_top = 531.0
+offset_top = 565.0
 offset_right = 975.0
-offset_bottom = 618.0
+offset_bottom = 652.0
 theme_override_fonts/font = ExtResource("2_bfvn4")
 theme_override_font_sizes/font_size = 25
 text = "LOS HACKERS ODIAN LAS CONTRASEÑAS SEGURAS. ¡HAZ QUE TE ODIEN!"

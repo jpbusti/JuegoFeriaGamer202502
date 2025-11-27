@@ -10,8 +10,8 @@ const POPUP_SCENES = [
 
 const SCREEN_W = 1152
 const SCREEN_H = 648
-const PAD_X = 250 
-const PAD_Y = 200 
+const PAD_X = 230
+const PAD_Y = 230 
 
 @onready var message_label: Label = $MessageLabel
 @onready var win_sound: AudioStreamPlayer2D = $WinSound
@@ -20,6 +20,7 @@ const PAD_Y = 200
 @onready var ani_bomba = $AniBomba
 @onready var bgm_player = $BgmPlayer
 @onready var game_timer = $GameTimer 
+@onready var laugh_sound: AudioStreamPlayer2D = $LaughSound
 
 var popups_restantes: int = 3
 var game_over: bool = false
@@ -92,6 +93,7 @@ func lose_game():
 	game_over = true
 	Global.round_failed = true
 	if fail_sound: fail_sound.play()
+	if laugh_sound: laugh_sound.play() 
 	if virus_sprite: virus_sprite.visible = true
 	if message_label:
 		message_label.text = "FALLASTE"

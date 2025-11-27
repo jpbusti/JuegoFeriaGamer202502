@@ -3,10 +3,11 @@ extends Node2D
 signal start_timer
 
 @export var META_BASE: int = 10
-@export var INCREMENTO_META: int = 2 
+@export var INCREMENTO_META: int = 1.3 
 
 @export var audio_tap: AudioStream
 @export var audio_bgm: AudioStream 
+
 
 @onready var virus = $Virus
 @onready var blaster = $DynamiteBlaster
